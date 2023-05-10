@@ -1,0 +1,20 @@
+spring:
+  profiles:
+    active: local
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/anonymous_forum_dev?serverTimezone=Asia/Seoul
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        highlight_sql: true
+    defer-datasource-initialization: true
+  logging:
+    level:
+      org.hibernate.sql: debug
