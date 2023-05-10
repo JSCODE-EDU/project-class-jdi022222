@@ -63,6 +63,7 @@ public class PostService {
      * @param id
      * @return PostResponseDTO
      */
+    @Transactional(readOnly = true)
     public PostResponseDTO findPostById(Long id) {
         Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
         return post.toDTO();
@@ -74,6 +75,7 @@ public class PostService {
      * @param id
      * @param requestDTO title, content 수정
      */
+    @Transactional
     public void editPostById(Long id, PostRequestDTO requestDTO) {
         Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
         post.setTitle(requestDTO.getTitle());
@@ -85,6 +87,7 @@ public class PostService {
      *
      * @param id
      */
+    @Transactional
     public void deletePostById(Long id) {
         // 삭제할 Post 존재 확인
         postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
@@ -99,6 +102,7 @@ public class PostService {
      * @param keyword
      * @return List<PostResponseDTO>
      */
+    @Transactional(readOnly = true)
     public List<PostResponseDTO> findPostsByKeyword(String keyword) {
         // 제목에 키워드를 포함한 Post 최근 100개 조회
         List<Post> postList = postRepository.findTop100ByTitleContainingOrderByCreatedAtDesc(keyword);
