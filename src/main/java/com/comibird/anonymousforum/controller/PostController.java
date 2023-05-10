@@ -36,7 +36,7 @@ public class PostController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/{id}")
+    @PutMapping("/{id}")
     public void editPost(@PathVariable Long id, @RequestBody PostRequestDTO requestDTO) {
         postService.editPostById(id, requestDTO);
     }
@@ -48,7 +48,7 @@ public class PostController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.GET, params = "keyword")
+    @GetMapping(params = "keyword")
     public List<PostResponseDTO> getPostsByKeyword(@RequestParam String keyword) {
         return postService.findPostsByKeyword(keyword);
     }
