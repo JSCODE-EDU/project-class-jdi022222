@@ -34,4 +34,10 @@ public class PostController {
     public PostResponseDTO getPost(@PathVariable Long id) {
         return postService.findPostById(id);
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/{id}")
+    public void editPost(@PathVariable Long id, @RequestBody PostRequestDTO requestDTO) {
+        postService.editPostById(id, requestDTO);
+    }
 }

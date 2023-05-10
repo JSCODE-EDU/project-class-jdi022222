@@ -67,4 +67,16 @@ public class PostService {
         Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
         return post.toDTO();
     }
+
+    /**
+     * 게시글 수정
+     *
+     * @param id
+     * @param requestDTO title, content 수정
+     */
+    public void editPostById(Long id, PostRequestDTO requestDTO) {
+        Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
+        post.setTitle(requestDTO.getTitle());
+        post.setTitle(requestDTO.getContent());
+    }
 }
