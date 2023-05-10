@@ -1,6 +1,7 @@
 package com.comibird.anonymousforum.domain.post;
 
 import com.comibird.anonymousforum.domain.auditing.BaseTimeEntity;
+import com.comibird.anonymousforum.service.PostResponseDTO;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,10 +19,10 @@ public class Post extends BaseTimeEntity {
     @Column(name = "post_id")
     private Long id;
 
-    String title;
+    private String title;
 
     @Column(columnDefinition = "TEXT")
-    String content;
+    private String content;
 
     // 생성자에 @Builder 적용
     @Builder
@@ -36,5 +37,15 @@ public class Post extends BaseTimeEntity {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    // Entity -> DTO
+    public PostResponseDTO toDto() {
+        return PostResponseDTO.builder()
+                .id(id)
+                .title(title)
+                .content(content)
+                .createdAt(getCreatedAt())
+                .build();
     }
 }
