@@ -1,5 +1,6 @@
 package com.comibird.anonymousforum.service;
 
+import com.comibird.anonymousforum.common.exception.post.PostNotFoundException;
 import com.comibird.anonymousforum.controller.PostRequestDTO;
 import com.comibird.anonymousforum.domain.post.Post;
 import com.comibird.anonymousforum.domain.post.PostRepository;
@@ -54,5 +55,16 @@ public class PostService {
         return postList.stream()
                 .map(post -> post.toDTO())
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * id로 게시글 조회
+     *
+     * @param id
+     * @return PostResponseDTO
+     */
+    public PostResponseDTO findPostById(Long id) {
+        Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
+        return post.toDTO();
     }
 }
