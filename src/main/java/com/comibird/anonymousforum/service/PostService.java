@@ -8,6 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -29,11 +32,27 @@ public class PostService {
         // Post 생성
         Post savedPost = postRepository.save(post);
         log.info("post saved:{}", savedPost.getId());
-        log.info("post createdAt:{}", savedPost.getCreatedAt());
 
         // Post Entity -> Response DTO
-        PostResponseDTO postResponseDTO = savedPost.toDto();
+        PostResponseDTO postResponseDTO = savedPost.toDTO();
 
         return postResponseDTO;
+    }
+
+    /**
+     * 게시글 전체 조회
+     * 최근 100개 limit
+     *
+     * @return List<PostResponseDTO>
+     */
+    @Transactional(readOnly = true)
+    public List<PostResponseDTO> findPosts() {
+        // Post 최근 100개 조회
+        List<Post> postList = postRepository.findTop100ByOrderByCreatedAtDesc();
+
+        // List<Post> -> List<PostResponseDTO>
+        return postList.stream()
+                .map(post -> post.toDTO())
+                .collect(Collectors.toList());
     }
 }

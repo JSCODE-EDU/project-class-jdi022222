@@ -40,7 +40,7 @@ public class Post extends BaseTimeEntity {
     }
 
     // Entity -> DTO
-    public PostResponseDTO toDto() {
+    public PostResponseDTO toDTO() {
         return PostResponseDTO.builder()
                 .id(id)
                 .title(title)
