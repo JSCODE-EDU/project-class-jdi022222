@@ -65,7 +65,7 @@ public class PostService {
      */
     @Transactional(readOnly = true)
     public PostResponseDTO findPostById(Long id) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException(id));
+        Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
         return post.toDTO();
     }
 
@@ -77,7 +77,7 @@ public class PostService {
      */
     @Transactional
     public void editPostById(Long id, PostRequestDTO requestDTO) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException(id));
+        Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
         post.setTitle(requestDTO.getTitle());
         post.setContent(requestDTO.getContent());
     }
@@ -90,7 +90,7 @@ public class PostService {
     @Transactional
     public void deletePostById(Long id) {
         // 삭제할 Post 존재 확인
-        postRepository.findById(id).orElseThrow(() -> new PostNotFoundException(id));
+        postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
 
         // 삭제
         postRepository.deleteById(id);
