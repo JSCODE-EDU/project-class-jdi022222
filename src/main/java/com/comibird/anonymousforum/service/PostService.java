@@ -53,7 +53,7 @@ public class PostService {
 
         // List<Post> -> List<PostResponseDTO>
         return postList.stream()
-                .map(post -> post.toDTO())
+                .map(Post::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -109,7 +109,7 @@ public class PostService {
 
         // List<Post> -> List<PostResponseDTO>
         return postList.stream()
-                .map(post -> new PostResponseDTO(post.getId(), post.getTitle(), post.getContent(), post.getCreatedAt()))
+                .map(Post::toDTO)
                 .collect(Collectors.toList());
     }
 }
