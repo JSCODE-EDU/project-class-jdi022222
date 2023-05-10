@@ -79,7 +79,7 @@ public class PostService {
     public void editPostById(Long id, PostRequestDTO requestDTO) {
         Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
         post.setTitle(requestDTO.getTitle());
-        post.setTitle(requestDTO.getContent());
+        post.setContent(requestDTO.getContent());
     }
 
     /**
