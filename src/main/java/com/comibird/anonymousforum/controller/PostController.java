@@ -40,4 +40,10 @@ public class PostController {
     public void editPost(@PathVariable Long id, @RequestBody PostRequestDTO requestDTO) {
         postService.editPostById(id, requestDTO);
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping("/{id}")
+    public void deletePost(@PathVariable Long id) {
+        postService.deletePostById(id);
+    }
 }

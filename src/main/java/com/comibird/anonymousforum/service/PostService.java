@@ -79,4 +79,17 @@ public class PostService {
         post.setTitle(requestDTO.getTitle());
         post.setTitle(requestDTO.getContent());
     }
+
+    /**
+     * id로 게시글 삭제
+     *
+     * @param id
+     */
+    public void deletePostById(Long id) {
+        // 삭제할 Post 존재 확인
+        postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
+
+        // 삭제
+        postRepository.deleteById(id);
+    }
 }
