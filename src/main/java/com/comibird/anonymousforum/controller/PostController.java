@@ -46,4 +46,10 @@ public class PostController {
     public void deletePost(@PathVariable Long id) {
         postService.deletePostById(id);
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.GET, params = "keyword")
+    public List<PostResponseDTO> getPostsByKeyword(@RequestParam String keyword) {
+        return postService.findPostsByKeyword(keyword);
+    }
 }

@@ -92,4 +92,20 @@ public class PostService {
         // 삭제
         postRepository.deleteById(id);
     }
+
+    /**
+     * 키워드로 게시글 최근 100개 조회
+     *
+     * @param keyword
+     * @return List<PostResponseDTO>
+     */
+    public List<PostResponseDTO> findPostsByKeyword(String keyword) {
+        // 제목에 키워드를 포함한 Post 최근 100개 조회
+        List<Post> postList = postRepository.findTop100ByTitleContainingOrderByCreatedAtDesc(keyword);
+
+        // List<Post> -> List<PostResponseDTO>
+        return postList.stream()
+                .map(post -> new PostResponseDTO(post.getId(), post.getTitle(), post.getContent(), post.getCreatedAt()))
+                .collect(Collectors.toList());
+    }
 }
