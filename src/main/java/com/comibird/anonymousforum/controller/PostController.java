@@ -1,6 +1,7 @@
 package com.comibird.anonymousforum.controller;
 
 import com.comibird.anonymousforum.service.PostResponseDTO;
+import com.comibird.anonymousforum.service.PostResponsesDTO;
 import com.comibird.anonymousforum.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,7 @@ public class PostController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public List<PostResponseDTO> getPosts() {
+    public PostResponsesDTO getPosts() {
         return postService.findPosts();
     }
 
@@ -49,7 +50,7 @@ public class PostController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(params = "keyword")
-    public List<PostResponseDTO> getPostsByKeyword(@RequestParam String keyword) {
+    public PostResponsesDTO getPostsByKeyword(@RequestParam String keyword) {
         return postService.findPostsByKeyword(keyword);
     }
 }

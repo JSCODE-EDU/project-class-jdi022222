@@ -44,17 +44,15 @@ public class PostService {
      * 게시글 전체 조회
      * 최근 100개 limit
      *
-     * @return List<PostResponseDTO>
+     * @return PostResponsesDTO
      */
     @Transactional(readOnly = true)
-    public List<PostResponseDTO> findPosts() {
+    public PostResponsesDTO findPosts() {
         // Post 최근 100개 조회
-        List<Post> postList = postRepository.findTop100ByOrderByCreatedAtDesc();
+        List<Post> posts = postRepository.findTop100ByOrderByCreatedAtDesc();
 
-        // List<Post> -> List<PostResponseDTO>
-        return postList.stream()
-                .map(post -> PostResponseDTO.toDTO(post))
-                .collect(Collectors.toList());
+        // List<Post> -> PostResponsesDTO
+        return PostResponsesDTO.of(posts);
     }
 
     /**
@@ -100,16 +98,14 @@ public class PostService {
      * 키워드로 게시글 최근 100개 조회
      *
      * @param keyword
-     * @return List<PostResponseDTO>
+     * @return PostResponsesDTO
      */
     @Transactional(readOnly = true)
-    public List<PostResponseDTO> findPostsByKeyword(String keyword) {
+    public PostResponsesDTO findPostsByKeyword(String keyword) {
         // 제목에 키워드를 포함한 Post 최근 100개 조회
-        List<Post> postList = postRepository.findTop100ByTitleContainingOrderByCreatedAtDesc(keyword);
+        List<Post> posts = postRepository.findTop100ByTitleContainingOrderByCreatedAtDesc(keyword);
 
-        // List<Post> -> List<PostResponseDTO>
-        return postList.stream()
-                .map(post -> PostResponseDTO.toDTO(post))
-                .collect(Collectors.toList());
+        // List<Post> -> PostResponsesDTO
+        return PostResponsesDTO.of(posts);
     }
 }
