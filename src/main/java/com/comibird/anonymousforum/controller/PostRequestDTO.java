@@ -14,7 +14,7 @@ public class PostRequestDTO {
     private String content;
 
     @Builder
-    public PostRequestDTO(Long orderId, String title, String content) {
+    private PostRequestDTO(Long orderId, String title, String content) {
         this.id = orderId;
         this.title = title;
         this.content = content;
