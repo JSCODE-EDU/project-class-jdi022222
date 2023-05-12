@@ -38,14 +38,4 @@ public class Post extends BaseTimeEntity {
     public void setContent(String content) {
         this.content = content;
     }
-
-    // Entity -> DTO
-    public PostResponseDTO toDTO() {
-        return PostResponseDTO.builder()
-                .id(id)
-                .title(title)
-                .content(content)
-                .createdAt(getCreatedAt())
-                .build();
-    }
 }

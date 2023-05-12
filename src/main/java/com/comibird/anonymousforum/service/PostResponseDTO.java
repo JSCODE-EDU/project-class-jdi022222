@@ -1,5 +1,6 @@
 package com.comibird.anonymousforum.service;
 
+import com.comibird.anonymousforum.domain.post.Post;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,5 +22,15 @@ public class PostResponseDTO {
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
+    }
+
+    // Entity -> DTO
+    public static PostResponseDTO toDTO(Post post){
+        return PostResponseDTO.builder()
+                .id(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .createdAt(post.getCreatedAt())
+                .build();
     }
 }

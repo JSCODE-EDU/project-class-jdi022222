@@ -35,7 +35,7 @@ public class PostService {
         log.info("post saved:{}", savedPost.getId());
 
         // Post Entity -> Response DTO
-        PostResponseDTO postResponseDTO = savedPost.toDTO();
+        PostResponseDTO postResponseDTO = PostResponseDTO.toDTO(savedPost);
 
         return postResponseDTO;
     }
@@ -53,7 +53,7 @@ public class PostService {
 
         // List<Post> -> List<PostResponseDTO>
         return postList.stream()
-                .map(Post::toDTO)
+                .map(post -> PostResponseDTO.toDTO(post))
                 .collect(Collectors.toList());
     }
 
@@ -66,7 +66,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostResponseDTO findPostById(Long id) {
         Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
-        return post.toDTO();
+        return PostResponseDTO.toDTO(post);
     }
 
     /**
@@ -109,7 +109,7 @@ public class PostService {
 
         // List<Post> -> List<PostResponseDTO>
         return postList.stream()
-                .map(Post::toDTO)
+                .map(post -> PostResponseDTO.toDTO(post))
                 .collect(Collectors.toList());
     }
 }
