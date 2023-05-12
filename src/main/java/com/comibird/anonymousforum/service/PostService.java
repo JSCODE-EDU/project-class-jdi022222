@@ -27,14 +27,11 @@ public class PostService {
      */
     @Transactional
     public PostResponseDTO save(PostRequestDTO requestDTO) {
-        // Request DTO -> Post Entity
         Post post = requestDTO.toEntity();
 
-        // Post 생성
         Post savedPost = postRepository.save(post);
         log.info("post saved:{}", savedPost.getId());
 
-        // Post Entity -> Response DTO
         PostResponseDTO postResponseDTO = PostResponseDTO.toDTO(savedPost);
 
         return postResponseDTO;
@@ -48,10 +45,8 @@ public class PostService {
      */
     @Transactional(readOnly = true)
     public PostResponsesDTO findPosts() {
-        // Post 최근 100개 조회
         List<Post> posts = postRepository.findTop100ByOrderByCreatedAtDesc();
 
-        // List<Post> -> PostResponsesDTO
         return PostResponsesDTO.of(posts);
     }
 
@@ -87,10 +82,8 @@ public class PostService {
      */
     @Transactional
     public void deletePostById(Long id) {
-        // 삭제할 Post 존재 확인
         postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
 
-        // 삭제
         postRepository.deleteById(id);
     }
 
@@ -102,10 +95,8 @@ public class PostService {
      */
     @Transactional(readOnly = true)
     public PostResponsesDTO findPostsByKeyword(String keyword) {
-        // 제목에 키워드를 포함한 Post 최근 100개 조회
         List<Post> posts = postRepository.findTop100ByTitleContainingOrderByCreatedAtDesc(keyword);
 
-        // List<Post> -> PostResponsesDTO
         return PostResponsesDTO.of(posts);
     }
 }
