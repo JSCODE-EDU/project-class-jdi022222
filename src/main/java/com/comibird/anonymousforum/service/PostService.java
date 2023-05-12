@@ -71,8 +71,7 @@ public class PostService {
     @Transactional
     public void editPostById(Long id, PostRequestDTO requestDTO) {
         Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
-        post.setTitle(requestDTO.getTitle());
-        post.setContent(requestDTO.getContent());
+        post.updatePost(requestDTO.getTitle(), requestDTO.getContent());
     }
 
     /**
