@@ -18,21 +18,18 @@ public class PostController {
 
     private final PostService postService;
 
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public ResponseEntity<PostResponseDTO> addPost(@RequestBody PostRequestDTO requestDTO) {
         PostResponseDTO responseDTO = postService.save(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
-    @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public ResponseEntity getPosts() {
         PostResponsesDTO responseDTO = postService.findPosts();
         return ResponseEntity.ok(responseDTO);
     }
 
-    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
     public ResponseEntity<PostResponseDTO> getPost(@PathVariable Long id) {
         PostResponseDTO responseDTO = postService.findPostById(id);
