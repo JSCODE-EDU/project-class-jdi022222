@@ -28,8 +28,8 @@ public class PostService {
      */
     @Transactional
     public PostResponseDTO save(PostRequestDTO requestDTO) {
+        requestDTO.validatePostData();
         Post post = requestDTO.toEntity();
-
         Post savedPost = postRepository.save(post);
         log.info("post saved:{}", savedPost.getId());
 
@@ -71,6 +71,7 @@ public class PostService {
      */
     @Transactional
     public void editPostById(Long id, PostRequestDTO requestDTO) {
+        requestDTO.validatePostData();
         Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
         post.updatePost(requestDTO.getTitle(), requestDTO.getContent());
     }
@@ -83,7 +84,6 @@ public class PostService {
     @Transactional
     public void deletePostById(Long id) {
         postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
-
         postRepository.deleteById(id);
     }
 
@@ -96,7 +96,6 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostResponsesDTO findPostsByKeyword(String keyword) {
         List<Post> posts = postRepository.findTop100ByTitleContainingOrderByCreatedAtDesc(keyword);
-
         return PostResponsesDTO.of(posts);
     }
 }
