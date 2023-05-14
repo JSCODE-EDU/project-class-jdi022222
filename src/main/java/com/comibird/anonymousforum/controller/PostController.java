@@ -7,6 +7,7 @@ import com.comibird.anonymousforum.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -19,37 +20,40 @@ public class PostController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public PostResponseDTO addPost(@RequestBody PostRequestDTO requestDTO) {
-        return postService.save(requestDTO);
+    public ResponseEntity<PostResponseDTO> addPost(@RequestBody PostRequestDTO requestDTO) {
+        PostResponseDTO responseDTO = postService.save(requestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public PostResponsesDTO getPosts() {
-        return postService.findPosts();
+    public ResponseEntity getPosts() {
+        PostResponsesDTO responseDTO = postService.findPosts();
+        return ResponseEntity.ok(responseDTO);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
-    public PostResponseDTO getPost(@PathVariable Long id) {
-        return postService.findPostById(id);
+    public ResponseEntity<PostResponseDTO> getPost(@PathVariable Long id) {
+        PostResponseDTO responseDTO = postService.findPostById(id);
+        return ResponseEntity.ok(responseDTO);
     }
 
-    @ResponseStatus(HttpStatus.OK)
     @PutMapping("/{id}")
-    public void editPost(@PathVariable Long id, @RequestBody PostRequestDTO requestDTO) {
+    public ResponseEntity<Void> editPost(@PathVariable Long id, @RequestBody PostRequestDTO requestDTO) {
         postService.editPostById(id, requestDTO);
+        return ResponseEntity.ok().build();
     }
 
-    @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{id}")
-    public void deletePost(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePost(@PathVariable Long id) {
         postService.deletePostById(id);
+        return ResponseEntity.ok().build();
     }
 
-    @ResponseStatus(HttpStatus.OK)
     @GetMapping(params = "keyword")
-    public PostResponsesDTO getPostsByKeyword(@RequestParam String keyword) {
-        return postService.findPostsByKeyword(keyword);
+    public ResponseEntity<PostResponsesDTO> getPostsByKeyword(@RequestParam String keyword) {
+        PostResponsesDTO responseDTO = postService.findPostsByKeyword(keyword);
+        return ResponseEntity.ok(responseDTO);
     }
 }

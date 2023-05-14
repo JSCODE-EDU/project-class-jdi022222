@@ -16,16 +16,16 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(PostNotFoundException.class)
-    public final ResponseEntity<ErrorResponse> handlePostNotFoundException(PostNotFoundException e) {
+    public ResponseEntity<ErrorResponse> handlePostNotFoundException(PostNotFoundException e) {
         log.error(e.getMessage(), e);
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 
     @ExceptionHandler(InvalidPostModificationException.class)
     public ResponseEntity<ErrorResponse> handleInvalidPostModificationException(InvalidPostModificationException e) {
         log.error(e.getMessage(), e);
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 }
