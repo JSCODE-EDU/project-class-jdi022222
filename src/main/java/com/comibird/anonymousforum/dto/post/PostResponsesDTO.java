@@ -1,4 +1,4 @@
-package com.comibird.anonymousforum.service;
+package com.comibird.anonymousforum.dto.post;
 
 import com.comibird.anonymousforum.domain.post.Post;
 import lombok.Builder;

@@ -1,16 +1,17 @@
 package com.comibird.anonymousforum.service;
 
 import com.comibird.anonymousforum.common.exception.post.PostNotFoundException;
-import com.comibird.anonymousforum.controller.PostRequestDTO;
+import com.comibird.anonymousforum.dto.post.PostRequestDTO;
 import com.comibird.anonymousforum.domain.post.Post;
 import com.comibird.anonymousforum.domain.post.PostRepository;
+import com.comibird.anonymousforum.dto.post.PostResponseDTO;
+import com.comibird.anonymousforum.dto.post.PostResponsesDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service

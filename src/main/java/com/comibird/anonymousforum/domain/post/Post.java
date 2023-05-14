@@ -1,7 +1,6 @@
 package com.comibird.anonymousforum.domain.post;
 
 import com.comibird.anonymousforum.domain.auditing.BaseTimeEntity;
-import com.comibird.anonymousforum.service.PostResponseDTO;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

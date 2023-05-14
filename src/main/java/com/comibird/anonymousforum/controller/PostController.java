@@ -1,14 +1,13 @@
 package com.comibird.anonymousforum.controller;
 
-import com.comibird.anonymousforum.service.PostResponseDTO;
-import com.comibird.anonymousforum.service.PostResponsesDTO;
+import com.comibird.anonymousforum.dto.post.PostRequestDTO;
+import com.comibird.anonymousforum.dto.post.PostResponseDTO;
+import com.comibird.anonymousforum.dto.post.PostResponsesDTO;
 import com.comibird.anonymousforum.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController
