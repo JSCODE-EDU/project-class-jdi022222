@@ -29,7 +29,6 @@ public class PostService {
      */
     @Transactional
     public PostResponseDTO save(PostRequestDTO requestDTO) {
-        requestDTO.validatePostData();
         Post post = requestDTO.toEntity();
         Post savedPost = postRepository.save(post);
         log.info("post saved:{}", savedPost.getId());
@@ -72,7 +71,6 @@ public class PostService {
      */
     @Transactional
     public void editPostById(Long id, PostRequestDTO requestDTO) {
-        requestDTO.validatePostData();
         Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
         post.updatePost(requestDTO.getTitle(), requestDTO.getContent());
     }
