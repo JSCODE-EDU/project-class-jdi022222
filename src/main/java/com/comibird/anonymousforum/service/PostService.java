@@ -1,12 +1,9 @@
 package com.comibird.anonymousforum.service;
 
 import com.comibird.anonymousforum.common.exception.post.PostNotFoundException;
-import com.comibird.anonymousforum.dto.post.PostKeywordDTO;
-import com.comibird.anonymousforum.dto.post.PostRequestDTO;
+import com.comibird.anonymousforum.dto.post.*;
 import com.comibird.anonymousforum.domain.post.Post;
 import com.comibird.anonymousforum.domain.post.PostRepository;
-import com.comibird.anonymousforum.dto.post.PostResponseDTO;
-import com.comibird.anonymousforum.dto.post.PostResponsesDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,7 +25,7 @@ public class PostService {
      * @return requestDTO
      */
     @Transactional
-    public PostResponseDTO save(PostRequestDTO requestDTO) {
+    public PostResponseDTO save(PostCreateRequestDTO requestDTO) {
         Post post = requestDTO.toEntity();
         Post savedPost = postRepository.save(post);
         log.info("post saved:{}", savedPost.getId());
@@ -70,7 +67,7 @@ public class PostService {
      * @param requestDTO title, content 수정
      */
     @Transactional
-    public void editPostById(Long id, PostRequestDTO requestDTO) {
+    public void editPostById(Long id, PostCreateRequestDTO requestDTO) {
         Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
         post.updatePost(requestDTO.getTitle(), requestDTO.getContent());
     }

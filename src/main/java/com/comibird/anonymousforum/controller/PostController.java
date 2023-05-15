@@ -1,7 +1,7 @@
 package com.comibird.anonymousforum.controller;
 
+import com.comibird.anonymousforum.dto.post.PostCreateRequestDTO;
 import com.comibird.anonymousforum.dto.post.PostKeywordDTO;
-import com.comibird.anonymousforum.dto.post.PostRequestDTO;
 import com.comibird.anonymousforum.dto.post.PostResponseDTO;
 import com.comibird.anonymousforum.dto.post.PostResponsesDTO;
 import com.comibird.anonymousforum.service.PostService;
@@ -20,7 +20,7 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping
-    public ResponseEntity<PostResponseDTO> addPost(@RequestBody PostRequestDTO requestDTO) {
+    public ResponseEntity<PostResponseDTO> addPost(@RequestBody PostCreateRequestDTO requestDTO) {
         requestDTO.validatePostData();
         PostResponseDTO responseDTO = postService.save(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
@@ -39,7 +39,7 @@ public class PostController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> editPost(@PathVariable Long id, @RequestBody PostRequestDTO requestDTO) {
+    public ResponseEntity<Void> editPost(@PathVariable Long id, @RequestBody PostCreateRequestDTO requestDTO) {
         requestDTO.validatePostData();
         postService.editPostById(id, requestDTO);
         return ResponseEntity.ok().build();
