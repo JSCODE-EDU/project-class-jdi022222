@@ -9,7 +9,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Slf4j
 @RestController
@@ -20,8 +23,7 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping
-    public ResponseEntity<PostResponseDTO> addPost(@RequestBody PostCreateRequestDTO requestDTO) {
-        requestDTO.validatePostData();
+    public ResponseEntity<PostResponseDTO> addPost(@Valid  @RequestBody PostCreateRequestDTO requestDTO) {
         PostResponseDTO responseDTO = postService.save(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
@@ -39,8 +41,7 @@ public class PostController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> editPost(@PathVariable Long id, @RequestBody PostCreateRequestDTO requestDTO) {
-        requestDTO.validatePostData();
+    public ResponseEntity<Void> editPost(@PathVariable Long id, @Valid @RequestBody PostCreateRequestDTO requestDTO) {
         postService.editPostById(id, requestDTO);
         return ResponseEntity.ok().build();
     }
@@ -52,11 +53,8 @@ public class PostController {
     }
 
     @GetMapping(params = "keyword")
-    public ResponseEntity<PostResponsesDTO> getPostsByKeyword(@RequestParam String keyword) {
-        PostKeywordDTO postKeywordDTO = new PostKeywordDTO(keyword.trim());
-        postKeywordDTO.validateKeywordData();
-
-        PostResponsesDTO responseDTO = postService.findPostsByKeyword(postKeywordDTO);
+    public ResponseEntity<PostResponsesDTO> getPostsByKeyword(@RequestParam PostKeywordDTO keywordDTO) {
+        PostResponsesDTO responseDTO = postService.findPostsByKeyword(keywordDTO.getKeyword().trim());
         return ResponseEntity.ok(responseDTO);
     }
 }

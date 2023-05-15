@@ -1,11 +1,10 @@
 package com.comibird.anonymousforum.common.exception;
 
-import com.comibird.anonymousforum.common.exception.post.InvalidPostKeywordException;
-import com.comibird.anonymousforum.common.exception.post.InvalidPostModificationException;
 import com.comibird.anonymousforum.common.exception.post.PostNotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -23,17 +22,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
-    @ExceptionHandler(InvalidPostModificationException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidPostModificationException(InvalidPostModificationException e) {
-        log.error(e.getMessage(), e);
-        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
-        return ResponseEntity.badRequest().body(errorResponse);
-    }
-
-    @ExceptionHandler(InvalidPostKeywordException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidPostKeywordException(InvalidPostKeywordException e) {
-        log.error(e.getMessage(), e);
-        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(BindingResult bindingResult) {
+        String message = bindingResult.getFieldErrors()
+                .get(0)
+                .getDefaultMessage();
+        log.error(message);
+        ErrorResponse errorResponse = new ErrorResponse(message);
         return ResponseEntity.badRequest().body(errorResponse);
     }
 }

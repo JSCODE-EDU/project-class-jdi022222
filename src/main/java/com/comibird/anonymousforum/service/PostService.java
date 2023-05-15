@@ -86,12 +86,12 @@ public class PostService {
     /**
      * 키워드로 게시글 최근 100개 조회
      *
-     * @param requestDTO
+     * @param keyword
      * @return PostResponsesDTO
      */
     @Transactional(readOnly = true)
-    public PostResponsesDTO findPostsByKeyword(PostKeywordDTO requestDTO) {
-        List<Post> posts = postRepository.findTop100ByTitleContainingOrderByCreatedAtDesc(requestDTO.getKeyword());
+    public PostResponsesDTO findPostsByKeyword(String keyword) {
+        List<Post> posts = postRepository.findTop100ByTitleContainingOrderByCreatedAtDesc(keyword);
         return PostResponsesDTO.of(posts);
     }
 }
