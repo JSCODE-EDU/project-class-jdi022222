@@ -1,5 +1,6 @@
 package com.comibird.anonymousforum.controller;
 
+import com.comibird.anonymousforum.dto.post.PostKeywordDTO;
 import com.comibird.anonymousforum.dto.post.PostRequestDTO;
 import com.comibird.anonymousforum.dto.post.PostResponseDTO;
 import com.comibird.anonymousforum.dto.post.PostResponsesDTO;
@@ -50,7 +51,10 @@ public class PostController {
 
     @GetMapping(params = "keyword")
     public ResponseEntity<PostResponsesDTO> getPostsByKeyword(@RequestParam String keyword) {
-        PostResponsesDTO responseDTO = postService.findPostsByKeyword(keyword);
+        PostKeywordDTO postKeywordDTO = new PostKeywordDTO(keyword);
+        postKeywordDTO.validateKeywordData();
+
+        PostResponsesDTO responseDTO = postService.findPostsByKeyword(postKeywordDTO);
         return ResponseEntity.ok(responseDTO);
     }
 }

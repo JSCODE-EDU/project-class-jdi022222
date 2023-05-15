@@ -1,5 +1,6 @@
 package com.comibird.anonymousforum.common.exception;
 
+import com.comibird.anonymousforum.common.exception.post.InvalidPostKeywordException;
 import com.comibird.anonymousforum.common.exception.post.InvalidPostModificationException;
 import com.comibird.anonymousforum.common.exception.post.PostNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidPostModificationException.class)
     public ResponseEntity<ErrorResponse> handleInvalidPostModificationException(InvalidPostModificationException e) {
+        log.error(e.getMessage(), e);
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ExceptionHandler(InvalidPostKeywordException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidPostKeywordException(InvalidPostKeywordException e) {
         log.error(e.getMessage(), e);
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
         return ResponseEntity.badRequest().body(errorResponse);

@@ -1,6 +1,7 @@
 package com.comibird.anonymousforum.service;
 
 import com.comibird.anonymousforum.common.exception.post.PostNotFoundException;
+import com.comibird.anonymousforum.dto.post.PostKeywordDTO;
 import com.comibird.anonymousforum.dto.post.PostRequestDTO;
 import com.comibird.anonymousforum.domain.post.Post;
 import com.comibird.anonymousforum.domain.post.PostRepository;
@@ -90,12 +91,12 @@ public class PostService {
     /**
      * 키워드로 게시글 최근 100개 조회
      *
-     * @param keyword
+     * @param requestDTO
      * @return PostResponsesDTO
      */
     @Transactional(readOnly = true)
-    public PostResponsesDTO findPostsByKeyword(String keyword) {
-        List<Post> posts = postRepository.findTop100ByTitleContainingOrderByCreatedAtDesc(keyword);
+    public PostResponsesDTO findPostsByKeyword(PostKeywordDTO requestDTO) {
+        List<Post> posts = postRepository.findTop100ByTitleContainingOrderByCreatedAtDesc(requestDTO.getKeyword());
         return PostResponsesDTO.of(posts);
     }
 }
