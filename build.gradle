@@ -35,6 +35,9 @@ dependencies {
     //테스트에서 lombok 사용
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
+
+    //Spring Doc
+    implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.9'
 }
 
 tasks.named('test') {

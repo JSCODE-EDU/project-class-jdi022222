@@ -1,11 +1,8 @@
 package com.comibird.anonymousforum.dto.post;
 
-import com.comibird.anonymousforum.common.exception.post.InvalidPostModificationException;
 import com.comibird.anonymousforum.domain.post.Post;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NonNull;
-import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
