@@ -53,7 +53,7 @@ public class PostController {
 
     @GetMapping(params = "keyword")
     public ResponseEntity<PostResponsesDTO> getPostsByKeyword(@RequestParam String keyword) {
-        PostKeywordDTO postKeywordDTO = new PostKeywordDTO(keyword);
+        PostKeywordDTO postKeywordDTO = new PostKeywordDTO(keyword.trim());
         postKeywordDTO.validateKeywordData();
 
         PostResponsesDTO responseDTO = postService.findPostsByKeyword(postKeywordDTO);
