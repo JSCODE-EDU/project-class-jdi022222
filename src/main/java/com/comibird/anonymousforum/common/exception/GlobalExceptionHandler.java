@@ -2,11 +2,12 @@ package com.comibird.anonymousforum.common.exception;
 
 import com.comibird.anonymousforum.common.exception.post.PostNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import static com.comibird.anonymousforum.common.utils.constants.ResponseConstants.POST_NOT_FOUND;
 
 /*
 대상 컨트롤러를 지정하지 않았기 때문에 모든 컨트롤러에서 발생하는 예외 처리 (글로벌 적용)
@@ -16,9 +17,19 @@ import static com.comibird.anonymousforum.common.utils.constants.ResponseConstan
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(PostNotFoundException.class)
-    public final ResponseEntity<String> handlePostNotFoundException(
-            PostNotFoundException exception) {
-        log.debug("게시글을 찾을 수 없습니다.", exception);
-        return POST_NOT_FOUND;
+    public ResponseEntity<ErrorResponse> handlePostNotFoundException(PostNotFoundException e) {
+        log.error(e.getMessage(), e);
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(BindingResult bindingResult) {
+        String message = bindingResult.getFieldErrors()
+                .get(0)
+                .getDefaultMessage();
+        log.error(message);
+        ErrorResponse errorResponse = new ErrorResponse(message);
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 }

@@ -1,16 +1,27 @@
 package com.comibird.anonymousforum.controller;
 
-import com.comibird.anonymousforum.service.PostResponseDTO;
-import com.comibird.anonymousforum.service.PostResponsesDTO;
+import com.comibird.anonymousforum.dto.post.PostCreateRequestDTO;
+import com.comibird.anonymousforum.dto.post.PostKeywordDTO;
+import com.comibird.anonymousforum.dto.post.PostResponseDTO;
+import com.comibird.anonymousforum.dto.post.PostResponsesDTO;
 import com.comibird.anonymousforum.service.PostService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import javax.validation.Valid;
 
 @Slf4j
+@Tag(name = "PostController", description = "익명 게시판 컨트롤러")
 @RestController
 @RequestMapping("/posts")
 @RequiredArgsConstructor
@@ -18,39 +29,63 @@ public class PostController {
 
     private final PostService postService;
 
-    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(operationId = "addPost", summary = "게시글 생성", description = "게시글을 생성한다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful Operation", content = @Content(array = @ArraySchema(schema = @Schema(implementation = PostResponseDTO.class)))),
+            @ApiResponse(responseCode = "400", description = "Invalid", content = @Content()),})
     @PostMapping
-    public PostResponseDTO addPost(@RequestBody PostRequestDTO requestDTO) {
-        return postService.save(requestDTO);
+    public ResponseEntity<PostResponseDTO> addPost(@Valid @RequestBody PostCreateRequestDTO requestDTO) {
+        PostResponseDTO responseDTO = postService.save(requestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
-    @ResponseStatus(HttpStatus.OK)
+    @Operation(operationId = "getPosts", summary = "게시글 전체 조회", description = "모든 게시글을 조회한다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful Operation", content = @Content(array = @ArraySchema(schema = @Schema(implementation = PostResponsesDTO.class)))),})
     @GetMapping
-    public PostResponsesDTO getPosts() {
-        return postService.findPosts();
+    public ResponseEntity getPosts() {
+        PostResponsesDTO responseDTO = postService.findPosts();
+        return ResponseEntity.ok(responseDTO);
     }
 
-    @ResponseStatus(HttpStatus.OK)
+    @Operation(operationId = "getPost", summary = "특정 게시글 조회", description = "특정 게시글을 조회한다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful Operation", content = @Content(array = @ArraySchema(schema = @Schema(implementation = PostResponseDTO.class)))),
+            @ApiResponse(responseCode = "404", description = "NotFound", content = @Content()),})
     @GetMapping("/{id}")
-    public PostResponseDTO getPost(@PathVariable Long id) {
-        return postService.findPostById(id);
+    public ResponseEntity<PostResponseDTO> getPost(@PathVariable Long id) {
+        PostResponseDTO responseDTO = postService.findPostById(id);
+        return ResponseEntity.ok(responseDTO);
     }
 
-    @ResponseStatus(HttpStatus.OK)
+    @Operation(operationId = "editPost", summary = "특정 게시글 수정", description = "특정 게시글을 수정한다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful Operation", content = @Content()),
+            @ApiResponse(responseCode = "400", description = "Invalid", content = @Content()),
+            @ApiResponse(responseCode = "404", description = "NotFound", content = @Content()),})
     @PutMapping("/{id}")
-    public void editPost(@PathVariable Long id, @RequestBody PostRequestDTO requestDTO) {
+    public ResponseEntity<Void> editPost(@PathVariable Long id, @Valid @RequestBody PostCreateRequestDTO requestDTO) {
         postService.editPostById(id, requestDTO);
+        return ResponseEntity.ok().build();
     }
 
-    @ResponseStatus(HttpStatus.OK)
+    @Operation(operationId = "deletePost", summary = "특정 게시글 삭제", description = "특정 게시글을 삭제한다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful Operation", content = @Content()),
+            @ApiResponse(responseCode = "404", description = "NotFound", content = @Content()),})
     @DeleteMapping("/{id}")
-    public void deletePost(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePost(@PathVariable Long id) {
         postService.deletePostById(id);
+        return ResponseEntity.ok().build();
     }
 
-    @ResponseStatus(HttpStatus.OK)
+    @Operation(operationId = "getPostsByKeyword", summary = "키워드로 게시글 조회", description = "키워드로 게시글을 조회한다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful Operation", content = @Content(array = @ArraySchema(schema = @Schema(implementation = PostResponsesDTO.class)))),
+            @ApiResponse(responseCode = "400", description = "Invalid", content = @Content()),})
     @GetMapping(params = "keyword")
-    public PostResponsesDTO getPostsByKeyword(@RequestParam String keyword) {
-        return postService.findPostsByKeyword(keyword);
+    public ResponseEntity<PostResponsesDTO> getPostsByKeyword(@RequestParam PostKeywordDTO keywordDTO) {
+        PostResponsesDTO responseDTO = postService.findPostsByKeyword(keywordDTO.getKeyword().trim());
+        return ResponseEntity.ok(responseDTO);
     }
 }

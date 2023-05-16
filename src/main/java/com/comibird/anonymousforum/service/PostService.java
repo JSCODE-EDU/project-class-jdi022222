@@ -1,7 +1,7 @@
 package com.comibird.anonymousforum.service;
 
 import com.comibird.anonymousforum.common.exception.post.PostNotFoundException;
-import com.comibird.anonymousforum.controller.PostRequestDTO;
+import com.comibird.anonymousforum.dto.post.*;
 import com.comibird.anonymousforum.domain.post.Post;
 import com.comibird.anonymousforum.domain.post.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -26,9 +25,8 @@ public class PostService {
      * @return requestDTO
      */
     @Transactional
-    public PostResponseDTO save(PostRequestDTO requestDTO) {
+    public PostResponseDTO save(PostCreateRequestDTO requestDTO) {
         Post post = requestDTO.toEntity();
-
         Post savedPost = postRepository.save(post);
         log.info("post saved:{}", savedPost.getId());
 
@@ -69,7 +67,7 @@ public class PostService {
      * @param requestDTO title, content 수정
      */
     @Transactional
-    public void editPostById(Long id, PostRequestDTO requestDTO) {
+    public void editPostById(Long id, PostCreateRequestDTO requestDTO) {
         Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
         post.updatePost(requestDTO.getTitle(), requestDTO.getContent());
     }
@@ -82,7 +80,6 @@ public class PostService {
     @Transactional
     public void deletePostById(Long id) {
         postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
-
         postRepository.deleteById(id);
     }
 
@@ -95,7 +92,6 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostResponsesDTO findPostsByKeyword(String keyword) {
         List<Post> posts = postRepository.findTop100ByTitleContainingOrderByCreatedAtDesc(keyword);
-
         return PostResponsesDTO.of(posts);
     }
 }
