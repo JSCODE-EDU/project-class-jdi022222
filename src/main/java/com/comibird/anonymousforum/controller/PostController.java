@@ -84,7 +84,7 @@ public class PostController {
             @ApiResponse(responseCode = "200", description = "Successful Operation", content = @Content(array = @ArraySchema(schema = @Schema(implementation = PostResponsesDTO.class)))),
             @ApiResponse(responseCode = "400", description = "Invalid", content = @Content()),})
     @GetMapping(params = "keyword")
-    public ResponseEntity<PostResponsesDTO> getPostsByKeyword(@RequestParam PostKeywordDTO keywordDTO) {
+    public ResponseEntity<PostResponsesDTO> getPostsByKeyword(@RequestParam("keyword") PostKeywordDTO keywordDTO) {
         PostResponsesDTO responseDTO = postService.findPostsByKeyword(keywordDTO.getKeyword().trim());
         return ResponseEntity.ok(responseDTO);
     }
