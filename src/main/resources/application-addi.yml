@@ -1,0 +1,13 @@
+spring:
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        highlight_sql: true
+    defer-datasource-initialization: true
+    logging:
+      level:
+        org.hibernate.sql: debug
+server:
+  port: 5000
