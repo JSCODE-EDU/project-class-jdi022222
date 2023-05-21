@@ -23,9 +23,8 @@ public class Post extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    // 생성자에 @Builder 적용
     @Builder
-    public Post(String title, String content) {
+    private Post(String title, String content) {
         this.title = title;
         this.content = content;
     }

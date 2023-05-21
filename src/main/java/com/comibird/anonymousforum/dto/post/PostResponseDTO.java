@@ -24,8 +24,7 @@ public class PostResponseDTO {
         this.createdAt = createdAt;
     }
 
-    // Entity -> DTO
-    public static PostResponseDTO toDTO(Post post){
+    public static PostResponseDTO from(Post post){
         return PostResponseDTO.builder()
                 .id(post.getId())
                 .title(post.getTitle())

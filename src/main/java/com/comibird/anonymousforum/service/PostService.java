@@ -30,7 +30,7 @@ public class PostService {
         Post savedPost = postRepository.save(post);
         log.info("post saved:{}", savedPost.getId());
 
-        PostResponseDTO postResponseDTO = PostResponseDTO.toDTO(savedPost);
+        PostResponseDTO postResponseDTO = PostResponseDTO.from(savedPost);
 
         return postResponseDTO;
     }
@@ -57,7 +57,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostResponseDTO findPostById(Long id) {
         Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
-        return PostResponseDTO.toDTO(post);
+        return PostResponseDTO.from(post);
     }
 
     /**

@@ -19,7 +19,7 @@ public class PostResponsesDTO {
     public static PostResponsesDTO of(List<Post> posts) {
         return PostResponsesDTO.builder()
                 .postResponseList(posts.stream()
-                        .map(PostResponseDTO::toDTO)
+                        .map(PostResponseDTO::from)
                         .collect(Collectors.toList()))
                 .build();
     }
