@@ -16,7 +16,7 @@ public class UserCreateRequestDTO {
     private String email;
 
     @NotEmpty(message = "비밀번호를 입력해주세요")
-    @Size(min = 8, max = 15, message = "내용을 1글자 이상 1000글자 이하로 입력해주세요.")
+    @Size(min = 8, max = 15, message = "비밀번호를 8글자 이상 15글자 이하로 입력해주세요.")
     private String password;
 
     @Builder
