@@ -1,7 +1,7 @@
 package com.comibird.anonymousforum.common.exception;
 
-import com.comibird.anonymousforum.common.exception.post.AlreadyExistEmailException;
-import com.comibird.anonymousforum.common.exception.post.PostNotFoundException;
+import com.comibird.anonymousforum.user.exception.AlreadyExistEmailException;
+import com.comibird.anonymousforum.post.exception.PostNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
