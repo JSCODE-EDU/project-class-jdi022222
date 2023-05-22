@@ -1,5 +1,6 @@
 package com.comibird.anonymousforum.common.exception;
 
+import com.comibird.anonymousforum.common.exception.post.AlreadyExistEmailException;
 import com.comibird.anonymousforum.common.exception.post.PostNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -36,5 +37,12 @@ public class GlobalExceptionHandler {
         log.error(message);
         ErrorResponse errorResponse = new ErrorResponse(message);
         return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ExceptionHandler(AlreadyExistEmailException.class)
+    public ResponseEntity<ErrorResponse> handleAlreadyExistEmailException(AlreadyExistEmailException e) {
+        log.error(e.getMessage(), e);
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 }
