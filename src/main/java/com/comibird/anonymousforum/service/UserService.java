@@ -8,6 +8,7 @@ import com.comibird.anonymousforum.dto.member.UserResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -16,6 +17,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    @Transactional
     public UserResponseDTO save(UserCreateRequestDTO requestDTO) {
         if (isExistEmail(requestDTO.getEmail())) {
             throw new AlreadyExistEmailException("이미 존재하는 이메일입니다");
@@ -29,7 +31,8 @@ public class UserService {
         return responseDTO;
     }
 
-    private boolean isExistEmail(String email) {
+    @Transactional(readOnly = true)
+    public boolean isExistEmail(String email) {
         return userRepository.existsByEmail(email);
     }
 }
