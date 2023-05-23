@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -27,14 +26,9 @@ public class PostService {
      * @return requestDTO
      */
     @Transactional
-    public PostResponseDTO save(PostCreateRequestDTO requestDTO) {
+    public void save(PostCreateRequestDTO requestDTO) {
         Post post = requestDTO.toEntity();
-        Post savedPost = postRepository.save(post);
-        log.info("post saved:{}", savedPost.getId());
-
-        PostResponseDTO postResponseDTO = PostResponseDTO.from(savedPost);
-
-        return postResponseDTO;
+        postRepository.save(post);
     }
 
     /**

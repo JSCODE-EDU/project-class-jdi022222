@@ -18,21 +18,16 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public UserResponseDTO save(UserCreateRequestDTO requestDTO) {
-        if (isExistEmail(requestDTO.getEmail())) {
-            throw new AlreadyExistEmailException("이미 존재하는 이메일입니다");
-        }
-        
+    public void save(UserCreateRequestDTO requestDTO) {
+        validateEmail(requestDTO.getEmail());
         User user = requestDTO.toEntity();
-        User savedUser = userRepository.save(user);
-        log.info("user saved:{}", savedUser.getId());
-
-        UserResponseDTO responseDTO = UserResponseDTO.from(user);
-        return responseDTO;
+        userRepository.save(user);
     }
 
     @Transactional(readOnly = true)
-    public boolean isExistEmail(String email) {
-        return userRepository.existsByEmail(email);
+    public void validateEmail(String email) {
+        if (userRepository.existsByEmail(email)) {
+            throw new AlreadyExistEmailException("이미 존재하는 이메일입니다");
+        }
     }
 }

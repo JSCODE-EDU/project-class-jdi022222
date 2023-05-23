@@ -34,9 +34,9 @@ public class PostController {
             @ApiResponse(responseCode = "200", description = "Successful Operation", content = @Content(array = @ArraySchema(schema = @Schema(implementation = PostResponseDTO.class)))),
             @ApiResponse(responseCode = "400", description = "Invalid", content = @Content()),})
     @PostMapping
-    public ResponseEntity<PostResponseDTO> addPost(@Valid @RequestBody PostCreateRequestDTO requestDTO) {
-        PostResponseDTO responseDTO = postService.save(requestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+    public ResponseEntity<Void> addPost(@Valid @RequestBody PostCreateRequestDTO requestDTO) {
+        postService.save(requestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @Operation(operationId = "getPosts", summary = "게시글 전체 조회", description = "모든 게시글을 조회한다.")
