@@ -3,6 +3,8 @@ package com.comibird.anonymousforum.user.dto.request;
 import com.comibird.anonymousforum.user.domain.User;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -26,9 +28,11 @@ public class UserCreateRequestDTO {
     }
 
     public User toEntity() {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String hashedPassword = passwordEncoder.encode(password);
         return User.builder()
                 .email(email)
-                .password(password)
+                .password(hashedPassword)
                 .build();
     }
 }

@@ -7,3 +7,5 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
+jwt:
+  secret-key: "242196b470d521470b48855c5a72036c62314450a0183fae2228f69cc7e7028497abbd9a6e61843df1148489d4555db54651ec29522b6cf5673fdaef5874ea00"

@@ -1,4 +1,4 @@
-package com.comibird.anonymousforum.base.domain;
+package com.comibird.anonymousforum.common.domain;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;

@@ -1,7 +1,5 @@
 package com.comibird.anonymousforum.common.exception;
 
-import com.comibird.anonymousforum.user.exception.AlreadyExistEmailException;
-import com.comibird.anonymousforum.post.exception.PostNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,13 +20,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
-    @ExceptionHandler(PostNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handlePostNotFoundException(PostNotFoundException e) {
-        log.error(e.getMessage(), e);
-        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(BindingResult bindingResult) {
         String message = bindingResult.getFieldErrors()
@@ -39,8 +30,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
-    @ExceptionHandler(AlreadyExistEmailException.class)
-    public ResponseEntity<ErrorResponse> handleAlreadyExistEmailException(AlreadyExistEmailException e) {
+    @ExceptionHandler(CustomNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCustomNotFoundException(CustomNotFoundException e) {
+        log.error(e.getMessage(), e);
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    @ExceptionHandler(CustomBadRequestException.class)
+    public ResponseEntity<ErrorResponse> handleCustomBadRequestException(CustomBadRequestException e) {
         log.error(e.getMessage(), e);
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);

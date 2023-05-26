@@ -1,6 +1,8 @@
 package com.comibird.anonymousforum.post.exception;
 
-public class InvalidPostKeywordException extends RuntimeException{
+import com.comibird.anonymousforum.common.exception.CustomBadRequestException;
+
+public class InvalidPostKeywordException extends CustomBadRequestException {
 
     public InvalidPostKeywordException(String message) {
         super(message);
