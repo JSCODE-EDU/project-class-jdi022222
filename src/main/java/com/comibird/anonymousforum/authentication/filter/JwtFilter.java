@@ -3,6 +3,7 @@ package com.comibird.anonymousforum.authentication.filter;
 import com.comibird.anonymousforum.authentication.exception.UnauthorizedAccessException;
 import com.comibird.anonymousforum.authentication.util.JwtProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -29,17 +31,17 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // Request Header에서 토큰 추출
         String jwt = resolveToken(request);
-//        System.out.println("jwt : " + jwt);
+        logger.info("jwt : " + jwt);
         // Token 유효성 검사
         if (StringUtils.hasText(jwt) && jwtProvider.validateToken(jwt)) {
-//            System.out.println("jwt 통과");
+            logger.info("jwt 통과");
             // 토큰으로 인증 정보를 추출
             Authentication authentication = jwtProvider.getAuthentication(jwt);
             // SecurityContext에 저장
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } else {
             // 토큰 유효성 검사 실패
-//            System.out.println("jwt 실패");
+            logger.info("jwt 실패");
         }
 
         filterChain.doFilter(request, response);

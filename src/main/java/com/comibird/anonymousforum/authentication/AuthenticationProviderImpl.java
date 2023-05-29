@@ -27,10 +27,10 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
 
         // AuthenticaionFilter에서 생성된 토큰으로부터 아이디와 비밀번호를 추출
-        String username = token.getName();
+        String email = token.getName();
         String password = (String) token.getCredentials();
         // 해당 회원 Database 조회
-        UserDetailsImpl userDetail = (UserDetailsImpl) userDetailsService.loadUserByUsername(username);
+        UserDetailsImpl userDetail = (UserDetailsImpl) userDetailsService.loadUserByUsername(email);
 
         // 비밀번호 확인
         if (!passwordEncoder.matches(password, userDetail.getPassword()))

@@ -3,11 +3,11 @@ package com.comibird.anonymousforum.authentication.dto.response;
 import lombok.Getter;
 
 @Getter
-public class LonginTokenResponse {
+public class TokenDTO {
 
     private String token;
 
-    public LonginTokenResponse(String token) {
+    public TokenDTO(String token) {
         this.token = token;
     }
 }

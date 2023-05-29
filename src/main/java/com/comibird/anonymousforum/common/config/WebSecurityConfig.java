@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -40,13 +41,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     };
 
     private static final String[] GET_WHITELIST = {
-            "/users",
             "/users/login",
             "/posts/**"
     };
 
     private static final String[] POST_WHITELIST = {
-            "/users",
+            "/users/signup",
+            "/users/login",
             "/posts/**"
     };
 
@@ -74,6 +75,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 ).formLogin(
                         formLogin -> formLogin
                                 .disable()
+                ).sessionManagement(
+                        sessionManagement -> sessionManagement
+                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
