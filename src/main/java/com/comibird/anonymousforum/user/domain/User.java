@@ -21,9 +21,13 @@ public class User extends BaseTimeEntity {
     private String email;
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    private Authority authority;
+
     @Builder
-    private User(String email, String password) {
+    private User(String email, String password, Authority authority) {
         this.email = email;
         this.password = password;
+        this.authority = authority;
     }
 }

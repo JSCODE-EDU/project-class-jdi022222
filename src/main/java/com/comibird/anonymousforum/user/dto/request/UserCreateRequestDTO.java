@@ -10,6 +10,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
+import static com.comibird.anonymousforum.user.domain.Authority.ROLE_USER;
+
 @Getter
 public class UserCreateRequestDTO {
 
@@ -33,6 +35,7 @@ public class UserCreateRequestDTO {
         return User.builder()
                 .email(email)
                 .password(hashedPassword)
+                .authority(ROLE_USER)
                 .build();
     }
 }

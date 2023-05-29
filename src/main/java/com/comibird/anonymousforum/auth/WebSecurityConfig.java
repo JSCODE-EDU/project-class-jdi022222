@@ -1,8 +1,9 @@
-package com.comibird.anonymousforum.common.config;
+package com.comibird.anonymousforum.auth;
 
-import com.comibird.anonymousforum.authentication.util.JwtProvider;
-import com.comibird.anonymousforum.authentication.filter.CustomAuthenticationFilter;
-import com.comibird.anonymousforum.authentication.filter.JwtFilter;
+import com.comibird.anonymousforum.auth.jwt.JwtAccessDeniedHandler;
+import com.comibird.anonymousforum.auth.jwt.JwtAuthenticationEntryPoint;
+import com.comibird.anonymousforum.auth.jwt.JwtSecurityConfig;
+import com.comibird.anonymousforum.auth.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,11 +13,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -30,14 +26,14 @@ import static org.springframework.http.HttpMethod.*;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtProvider jwtProvider;
-    private final AuthenticationEntryPoint authenticationEntryPoint;// 인증 실패 또는 인증헤더가 전달받지 못했을때 핸들러
-    private final AuthenticationSuccessHandler authenticationSuccessHandler;// 인증 성공 핸들러
-    private final AuthenticationFailureHandler authenticationFailureHandler;// 인증 실패 핸들러
-    private final AccessDeniedHandler accessDeniedHandler;// 인가 실패 핸들러
+    private final JwtAuthenticationEntryPoint authenticationEntryPoint;// 인증 실패 또는 인증헤더가 전달받지 못했을때 핸들러
+    private final JwtAccessDeniedHandler accessDeniedHandler;// 인가 실패 핸들러
 
     private static final String[] ALL_WHITELIST = {
             "/v3/api-docs/**",
-            "/swagger-ui/**"
+            "/swagger-ui/**",
+            "/h2-console/**",
+            "/favicon.ico"
     };
 
     private static final String[] GET_WHITELIST = {
@@ -79,9 +75,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         sessionManagement -> sessionManagement
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
-        ;
+                // JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용
+                .apply(new JwtSecurityConfig(jwtProvider));
 
     }
 
@@ -106,24 +101,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
         return urlBasedCorsConfigurationSource;
-    }
-
-    @Bean
-    public CustomAuthenticationFilter authenticationFilter() throws Exception {
-        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
-        customAuthenticationFilter.setFilterProcessesUrl("/login");
-
-        // 로그인 인증 성공
-        customAuthenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
-        // 로그인 인증 실패
-        customAuthenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler);
-
-        customAuthenticationFilter.afterPropertiesSet();
-        return customAuthenticationFilter;
-    }
-
-    @Bean
-    public JwtFilter jwtFilter() {
-        return new JwtFilter(jwtProvider);
     }
 }
