@@ -37,7 +37,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     };
 
     private static final String[] GET_WHITELIST = {
-            "/users/login",
             "/posts/**"
     };
 
@@ -46,6 +45,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/users/login",
             "/users/reissue",
             "/posts/**"
+    };
+
+    private static final String[] DELETE_WHITELIST = {
+            "/users/logout/*",
     };
 
     @Override
@@ -68,6 +71,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                                 .antMatchers(ALL_WHITELIST).permitAll()
                                 .antMatchers(GET, GET_WHITELIST).permitAll()
                                 .antMatchers(POST, POST_WHITELIST).permitAll()
+                                .antMatchers(DELETE, DELETE_WHITELIST).permitAll()
                                 .antMatchers("/**").authenticated()
                 ).formLogin(
                         formLogin -> formLogin

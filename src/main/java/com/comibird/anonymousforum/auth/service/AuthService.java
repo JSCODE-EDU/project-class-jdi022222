@@ -74,4 +74,9 @@ public class AuthService {
         // 토큰 발급
         return tokenDTO;
     }
+
+    @Transactional
+    public void logout(String id) {
+        refreshTokenRepository.deleteByKey(id);
+    }
 }
