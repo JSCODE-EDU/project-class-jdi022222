@@ -24,11 +24,4 @@ public class PostCreateRequestDTO {
         this.title = title;
         this.content = content;
     }
-
-    public Post toEntity() {
-        return Post.builder()
-                .title(title)
-                .content(content)
-                .build();
-    }
 }

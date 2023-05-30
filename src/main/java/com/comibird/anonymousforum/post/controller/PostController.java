@@ -1,10 +1,12 @@
 package com.comibird.anonymousforum.post.controller;
 
+import com.comibird.anonymousforum.auth.util.SecurityUtil;
 import com.comibird.anonymousforum.post.dto.request.PostCreateRequestDTO;
 import com.comibird.anonymousforum.post.dto.request.PostKeywordDTO;
 import com.comibird.anonymousforum.post.dto.response.PostResponseDTO;
 import com.comibird.anonymousforum.post.dto.response.PostResponsesDTO;
 import com.comibird.anonymousforum.post.service.PostService;
+import com.comibird.anonymousforum.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,6 +30,7 @@ import javax.validation.Valid;
 public class PostController {
 
     private final PostService postService;
+    private final UserService userService;
 
     @Operation(operationId = "addPost", summary = "게시글 생성", description = "게시글을 생성한다.")
     @ApiResponses(value = {
@@ -35,7 +38,7 @@ public class PostController {
             @ApiResponse(responseCode = "400", description = "Invalid", content = @Content()),})
     @PostMapping
     public ResponseEntity<Void> addPost(@Valid @RequestBody PostCreateRequestDTO requestDTO) {
-        postService.save(requestDTO);
+        postService.save(SecurityUtil.getCurrentMemberId(), requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
