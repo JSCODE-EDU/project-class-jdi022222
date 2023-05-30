@@ -68,7 +68,7 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "NotFound", content = @Content()),})
     @PutMapping("/{id}")
     public ResponseEntity<Void> editPost(@PathVariable Long id, @Valid @RequestBody PostCreateRequestDTO requestDTO) {
-        postService.editPostById(id, requestDTO);
+        postService.editPostById(SecurityUtil.getCurrentMemberId(), id, requestDTO);
         return ResponseEntity.ok().build();
     }
 
@@ -78,7 +78,7 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "NotFound", content = @Content()),})
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable Long id) {
-        postService.deletePostById(id);
+        postService.deletePostById(SecurityUtil.getCurrentMemberId(), id);
         return ResponseEntity.ok().build();
     }
 

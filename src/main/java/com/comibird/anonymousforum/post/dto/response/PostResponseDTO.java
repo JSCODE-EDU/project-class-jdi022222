@@ -10,23 +10,26 @@ import java.time.LocalDateTime;
 @Getter
 public class PostResponseDTO {
 
-    private Long id;
+    private Long postId;
+    private String userEmail;
     private String title;
     private String content;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
     @Builder
-    private PostResponseDTO(Long id, String title, String content, LocalDateTime createdAt){
-        this.id = id;
+    private PostResponseDTO(Long postId, String email, String title, String content, LocalDateTime createdAt) {
+        this.postId = postId;
+        this.userEmail = email;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
     }
 
-    public static PostResponseDTO from(Post post){
+    public static PostResponseDTO from(Post post) {
         return PostResponseDTO.builder()
-                .id(post.getId())
+                .postId(post.getId())
+                .email(post.getUser().getEmail())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .createdAt(post.getCreatedAt())
