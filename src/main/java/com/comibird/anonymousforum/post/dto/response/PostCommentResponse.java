@@ -1,8 +1,7 @@
 package com.comibird.anonymousforum.post.dto.response;
 
 import com.comibird.anonymousforum.comment.domain.Comment;
-import com.comibird.anonymousforum.comment.dto.response.CommentResponseDTO;
-import com.comibird.anonymousforum.comment.dto.response.CommentResponsesDTO;
+import com.comibird.anonymousforum.comment.dto.response.CommentResponses;
 import com.comibird.anonymousforum.post.domain.Post;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
@@ -12,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-public class PostCommentResponseDTO {
+public class PostCommentResponse {
 
     private Long postId;
     private String userEmail;
@@ -21,20 +20,20 @@ public class PostCommentResponseDTO {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
-    private CommentResponsesDTO commentResponsesDTO;
+    private CommentResponses commentResponsesDTO;
 
     @Builder
-    private PostCommentResponseDTO(Long postId, String email, String title, String content, LocalDateTime createdAt, List<Comment> comments) {
+    private PostCommentResponse(Long postId, String email, String title, String content, LocalDateTime createdAt, List<Comment> comments) {
         this.postId = postId;
         this.userEmail = email;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
-        this.commentResponsesDTO = CommentResponsesDTO.of(comments);
+        this.commentResponsesDTO = CommentResponses.of(comments);
     }
 
-    public static PostCommentResponseDTO from(Post post, List<Comment> comments) {
-        return PostCommentResponseDTO.builder()
+    public static PostCommentResponse from(Post post, List<Comment> comments) {
+        return PostCommentResponse.builder()
                 .postId(post.getId())
                 .email(post.getUser().getEmail())
                 .title(post.getTitle())

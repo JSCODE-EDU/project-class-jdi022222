@@ -2,11 +2,12 @@ package com.comibird.anonymousforum.comment.dto.request;
 
 import lombok.Getter;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
-public class CommentCreateRequestDTO {
+public class CommentCreateRequest {
 
-    @NotNull(message = "댓글을 입력해주세요.")
+    @NotBlank(message = "댓글은 공백이 될 수 없습니다.")
     private String content;
 }

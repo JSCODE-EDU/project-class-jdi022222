@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 import static com.comibird.anonymousforum.user.domain.Authority.ROLE_USER;
 
 @Getter
-public class UserCreateRequestDTO {
+public class UserCreateRequest {
 
     @NotEmpty(message = "이메일을 입력해주세요.")
     @Email(message = "유효한 이메일을 입력해주세요.")
@@ -24,7 +24,7 @@ public class UserCreateRequestDTO {
     private String password;
 
     @Builder
-    private UserCreateRequestDTO(String email, String password) {
+    private UserCreateRequest(String email, String password) {
         this.email = email;
         this.password = password;
     }

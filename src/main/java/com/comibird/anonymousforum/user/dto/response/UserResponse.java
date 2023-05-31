@@ -8,7 +8,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class UserResponseDTO {
+public class UserResponse {
 
     private Long id;
     private String email;
@@ -16,14 +16,14 @@ public class UserResponseDTO {
     private LocalDateTime signUpTime;
 
     @Builder
-    private UserResponseDTO(final Long id, final String email, final LocalDateTime signUpTime) {
+    private UserResponse(final Long id, final String email, final LocalDateTime signUpTime) {
         this.id = id;
         this.email = email;
         this.signUpTime = signUpTime;
     }
 
-    public static UserResponseDTO from(User user) {
-        return UserResponseDTO.builder()
+    public static UserResponse from(User user) {
+        return UserResponse.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .signUpTime(user.getCreatedAt())

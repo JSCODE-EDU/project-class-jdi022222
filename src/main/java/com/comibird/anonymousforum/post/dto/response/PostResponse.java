@@ -1,16 +1,14 @@
 package com.comibird.anonymousforum.post.dto.response;
 
-import com.comibird.anonymousforum.comment.domain.Comment;
 import com.comibird.anonymousforum.post.domain.Post;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
-public class PostResponseDTO {
+public class PostResponse {
 
     private Long postId;
     private String userEmail;
@@ -20,7 +18,7 @@ public class PostResponseDTO {
     private LocalDateTime createdAt;
 
     @Builder
-    private PostResponseDTO(Long postId, String email, String title, String content, LocalDateTime createdAt) {
+    private PostResponse(Long postId, String email, String title, String content, LocalDateTime createdAt) {
         this.postId = postId;
         this.userEmail = email;
         this.title = title;
@@ -28,8 +26,8 @@ public class PostResponseDTO {
         this.createdAt = createdAt;
     }
 
-    public static PostResponseDTO from(Post post) {
-        return PostResponseDTO.builder()
+    public static PostResponse from(Post post) {
+        return PostResponse.builder()
                 .postId(post.getId())
                 .email(post.getUser().getEmail())
                 .title(post.getTitle())

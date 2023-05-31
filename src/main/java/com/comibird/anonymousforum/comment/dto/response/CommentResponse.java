@@ -8,21 +8,21 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class CommentResponseDTO {
+public class CommentResponse {
     private String content;
     private String email;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
     @Builder
-    private CommentResponseDTO(String content, String email, LocalDateTime createdAt) {
+    private CommentResponse(String content, String email, LocalDateTime createdAt) {
         this.content = content;
         this.email = email;
         this.createdAt = createdAt;
     }
 
-    public static CommentResponseDTO from(Comment comment) {
-        return CommentResponseDTO.builder()
+    public static CommentResponse from(Comment comment) {
+        return CommentResponse.builder()
                 .content(comment.getContent())
                 .email(comment.getUser().getEmail())
                 .createdAt(comment.getCreatedAt())
