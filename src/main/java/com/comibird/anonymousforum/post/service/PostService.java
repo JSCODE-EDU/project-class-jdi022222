@@ -2,8 +2,11 @@ package com.comibird.anonymousforum.post.service;
 
 import com.comibird.anonymousforum.auth.exception.UnauthorizedAccessException;
 import com.comibird.anonymousforum.auth.util.SecurityUtil;
+import com.comibird.anonymousforum.comment.domain.Comment;
+import com.comibird.anonymousforum.comment.repository.CommentRepository;
 import com.comibird.anonymousforum.post.domain.Post;
 import com.comibird.anonymousforum.post.dto.request.PostCreateRequestDTO;
+import com.comibird.anonymousforum.post.dto.response.PostCommentResponseDTO;
 import com.comibird.anonymousforum.post.dto.response.PostResponseDTO;
 import com.comibird.anonymousforum.post.dto.response.PostResponsesDTO;
 import com.comibird.anonymousforum.post.exception.PostNotFoundException;
@@ -25,6 +28,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional
     public void save(Long userId, PostCreateRequestDTO requestDTO) {
@@ -44,9 +48,10 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public PostResponseDTO findPostById(Long postId) {
+    public PostCommentResponseDTO findPostById(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
-        return PostResponseDTO.from(post);
+        List<Comment> comments = commentRepository.findAllByPostId(post.getId());
+        return PostCommentResponseDTO.from(post, comments);
     }
 
     @Transactional

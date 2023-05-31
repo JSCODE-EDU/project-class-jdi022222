@@ -1,6 +1,7 @@
 package com.comibird.anonymousforum.user.domain;
 
 import com.comibird.anonymousforum.common.domain.BaseTimeEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,6 +20,7 @@ public class User extends BaseTimeEntity {
     private Long id;
 
     private String email;
+    @JsonIgnore
     private String password;
 
     @Enumerated(EnumType.STRING)

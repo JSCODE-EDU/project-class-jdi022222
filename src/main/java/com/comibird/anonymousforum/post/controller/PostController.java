@@ -3,6 +3,7 @@ package com.comibird.anonymousforum.post.controller;
 import com.comibird.anonymousforum.auth.util.SecurityUtil;
 import com.comibird.anonymousforum.post.dto.request.PostCreateRequestDTO;
 import com.comibird.anonymousforum.post.dto.request.PostKeywordDTO;
+import com.comibird.anonymousforum.post.dto.response.PostCommentResponseDTO;
 import com.comibird.anonymousforum.post.dto.response.PostResponseDTO;
 import com.comibird.anonymousforum.post.dto.response.PostResponsesDTO;
 import com.comibird.anonymousforum.post.service.PostService;
@@ -56,8 +57,8 @@ public class PostController {
             @ApiResponse(responseCode = "200", description = "Successful Operation", content = @Content(array = @ArraySchema(schema = @Schema(implementation = PostResponseDTO.class)))),
             @ApiResponse(responseCode = "404", description = "NotFound", content = @Content()),})
     @GetMapping("/{id}")
-    public ResponseEntity<PostResponseDTO> getPost(@PathVariable Long id) {
-        PostResponseDTO responseDTO = postService.findPostById(id);
+    public ResponseEntity<PostCommentResponseDTO> getPost(@PathVariable Long id) {
+       PostCommentResponseDTO responseDTO = postService.findPostById(id);
         return ResponseEntity.ok(responseDTO);
     }
 
