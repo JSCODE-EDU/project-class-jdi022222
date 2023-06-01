@@ -1,9 +1,9 @@
 package com.comibird.anonymousforum.auth.service;
 
 import com.comibird.anonymousforum.auth.domain.RefreshToken;
-import com.comibird.anonymousforum.auth.dto.request.LoginRequestDTO;
-import com.comibird.anonymousforum.auth.dto.request.TokenRequestDTO;
-import com.comibird.anonymousforum.auth.dto.response.TokenResponseDTO;
+import com.comibird.anonymousforum.auth.dto.request.LoginRequest;
+import com.comibird.anonymousforum.auth.dto.request.TokenRequest;
+import com.comibird.anonymousforum.auth.dto.response.TokenResponse;
 import com.comibird.anonymousforum.auth.exception.UnauthorizedAccessException;
 import com.comibird.anonymousforum.auth.jwt.JwtProvider;
 import com.comibird.anonymousforum.auth.repository.RefreshTokenRepository;
@@ -22,7 +22,7 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
-    public TokenResponseDTO login(LoginRequestDTO loginRequestDTO) {
+    public TokenResponse login(LoginRequest loginRequestDTO) {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = loginRequestDTO.toAuthentication();
 
@@ -31,22 +31,22 @@ public class AuthService {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
-        TokenResponseDTO tokenDTO = jwtProvider.generateTokenDto(authentication);
+        TokenResponse token = jwtProvider.generateToken(authentication);
 
         // 4. RefreshToken 저장
         RefreshToken refreshToken = RefreshToken.builder()
                 .key(authentication.getName())
-                .value(tokenDTO.getRefreshToken())
+                .value(token.getRefreshToken())
                 .build();
 
         refreshTokenRepository.save(refreshToken);
 
         // 5. 토큰 발급
-        return tokenDTO;
+        return token;
     }
 
     @Transactional
-    public TokenResponseDTO reissue(TokenRequestDTO tokenRequestDTO) {
+    public TokenResponse reissue(TokenRequest tokenRequestDTO) {
         // 1. Refresh Token 검증
         if (!jwtProvider.validateToken(tokenRequestDTO.getRefreshToken())) {
             throw new UnauthorizedAccessException("Refresh Token 이 유효하지 않습니다.");
@@ -65,7 +65,7 @@ public class AuthService {
         }
 
         // 5. 새로운 토큰 생성
-        TokenResponseDTO tokenDTO = jwtProvider.generateTokenDto(authentication);
+        TokenResponse tokenDTO = jwtProvider.generateToken(authentication);
 
         // 6. 저장소 정보 업데이트
         RefreshToken newRefreshToken = refreshToken.updateValue(tokenDTO.getRefreshToken());

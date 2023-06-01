@@ -1,6 +1,6 @@
 package com.comibird.anonymousforum.auth.jwt;
 
-import com.comibird.anonymousforum.auth.dto.response.TokenResponseDTO;
+import com.comibird.anonymousforum.auth.dto.response.TokenResponse;
 import com.comibird.anonymousforum.auth.exception.UnauthorizedAccessException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -39,7 +39,7 @@ public class JwtProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokenResponseDTO generateTokenDto(Authentication authentication) {
+    public TokenResponse generateToken(Authentication authentication) {
         // 권한들 가져오기
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -62,7 +62,7 @@ public class JwtProvider {
                 .signWith(HS512, key)
                 .compact();
 
-        return TokenResponseDTO.builder()
+        return TokenResponse.builder()
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
                 .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
