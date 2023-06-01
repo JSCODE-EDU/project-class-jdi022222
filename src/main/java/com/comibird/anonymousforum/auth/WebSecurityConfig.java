@@ -44,7 +44,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String[] POST_WHITELIST = {
             "/users/signup",
             "/users/login",
-            "/users/reissue"
+            "/users/reissue",
+            "/comment/**",
+            "/heart/**"
     };
 
     private static final String[] DELETE_WHITELIST = {

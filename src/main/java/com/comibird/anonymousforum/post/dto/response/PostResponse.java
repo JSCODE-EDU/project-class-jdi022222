@@ -1,11 +1,14 @@
 package com.comibird.anonymousforum.post.dto.response;
 
+import com.comibird.anonymousforum.heart.domain.Heart;
 import com.comibird.anonymousforum.post.domain.Post;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 public class PostResponse {
@@ -17,13 +20,16 @@ public class PostResponse {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
+    private int heartCount;
+
     @Builder
-    private PostResponse(Long postId, String email, String title, String content, LocalDateTime createdAt) {
+    private PostResponse(Long postId, String email, String title, String content, LocalDateTime createdAt, Set<Heart> hearts) {
         this.postId = postId;
         this.userEmail = email;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
+        this.heartCount = hearts.size();
     }
 
     public static PostResponse from(Post post) {
@@ -33,6 +39,7 @@ public class PostResponse {
                 .title(post.getTitle())
                 .content(post.getContent())
                 .createdAt(post.getCreatedAt())
+                .hearts(post.getHearts())
                 .build();
     }
 }
