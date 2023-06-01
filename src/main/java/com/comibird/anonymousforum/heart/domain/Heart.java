@@ -2,7 +2,6 @@ package com.comibird.anonymousforum.heart.domain;
 
 import com.comibird.anonymousforum.common.domain.BaseTimeEntity;
 import com.comibird.anonymousforum.post.domain.Post;
-import com.comibird.anonymousforum.user.domain.Authority;
 import com.comibird.anonymousforum.user.domain.User;
 import lombok.AccessLevel;
 import lombok.Builder;

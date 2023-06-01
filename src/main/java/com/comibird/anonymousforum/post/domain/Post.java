@@ -1,6 +1,5 @@
 package com.comibird.anonymousforum.post.domain;
 
-import com.comibird.anonymousforum.comment.domain.Comment;
 import com.comibird.anonymousforum.common.domain.BaseTimeEntity;
 import com.comibird.anonymousforum.heart.domain.Heart;
 import com.comibird.anonymousforum.user.domain.User;
@@ -10,9 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity

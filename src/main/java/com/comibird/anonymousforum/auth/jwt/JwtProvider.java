@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-import static io.jsonwebtoken.SignatureAlgorithm.*;
+import static io.jsonwebtoken.SignatureAlgorithm.HS512;
 
 @Slf4j
 @Component

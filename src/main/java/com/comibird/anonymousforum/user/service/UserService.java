@@ -1,8 +1,8 @@
 package com.comibird.anonymousforum.user.service;
 
+import com.comibird.anonymousforum.user.domain.User;
 import com.comibird.anonymousforum.user.dto.request.UserCreateRequest;
 import com.comibird.anonymousforum.user.dto.response.UserResponse;
-import com.comibird.anonymousforum.user.domain.User;
 import com.comibird.anonymousforum.user.exception.AlreadyExistEmailException;
 import com.comibird.anonymousforum.user.reposiroty.UserRepository;
 import lombok.RequiredArgsConstructor;

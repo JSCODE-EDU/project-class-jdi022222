@@ -2,8 +2,8 @@ package com.comibird.anonymousforum.auth;
 
 import com.comibird.anonymousforum.auth.jwt.JwtAccessDeniedHandler;
 import com.comibird.anonymousforum.auth.jwt.JwtAuthenticationEntryPoint;
-import com.comibird.anonymousforum.auth.jwt.JwtSecurityConfig;
 import com.comibird.anonymousforum.auth.jwt.JwtProvider;
+import com.comibird.anonymousforum.auth.jwt.JwtSecurityConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
