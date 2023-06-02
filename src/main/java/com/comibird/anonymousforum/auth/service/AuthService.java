@@ -1,11 +1,14 @@
 package com.comibird.anonymousforum.auth.service;
 
+import com.comibird.anonymousforum.auth.domain.AccessToken;
 import com.comibird.anonymousforum.auth.domain.RefreshToken;
 import com.comibird.anonymousforum.auth.dto.request.LoginRequest;
+import com.comibird.anonymousforum.auth.dto.request.LogoutRequest;
 import com.comibird.anonymousforum.auth.dto.request.TokenRequest;
 import com.comibird.anonymousforum.auth.dto.response.TokenResponse;
 import com.comibird.anonymousforum.auth.exception.UnauthorizedAccessException;
 import com.comibird.anonymousforum.auth.jwt.JwtProvider;
+import com.comibird.anonymousforum.auth.repository.AccessTokenRepository;
 import com.comibird.anonymousforum.auth.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,11 +23,12 @@ public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final AccessTokenRepository accessTokenRepository;
 
     @Transactional
-    public TokenResponse login(LoginRequest loginRequestDTO) {
+    public TokenResponse login(LoginRequest loginRequest) {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
-        UsernamePasswordAuthenticationToken authenticationToken = loginRequestDTO.toAuthentication();
+        UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
 
         // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
         //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
@@ -46,21 +50,21 @@ public class AuthService {
     }
 
     @Transactional
-    public TokenResponse reissue(TokenRequest tokenRequestDTO) {
+    public TokenResponse reissue(TokenRequest tokenRequest) {
         // 1. Refresh Token 검증
-        if (!jwtProvider.validateToken(tokenRequestDTO.getRefreshToken())) {
+        if (!jwtProvider.validateToken(tokenRequest.getRefreshToken())) {
             throw new UnauthorizedAccessException("Refresh Token 이 유효하지 않습니다.");
         }
 
         // 2. Access Token 에서 Member ID 가져오기
-        Authentication authentication = jwtProvider.getAuthentication(tokenRequestDTO.getAccessToken());
+        Authentication authentication = jwtProvider.getAuthentication(tokenRequest.getAccessToken());
 
         // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
         RefreshToken refreshToken = refreshTokenRepository.findById(authentication.getName())
                 .orElseThrow(() -> new UnauthorizedAccessException("로그아웃 된 사용자입니다."));
 
         // 4. Refresh Token 일치하는지 검사
-        if (!refreshToken.getValue().equals(tokenRequestDTO.getRefreshToken())) {
+        if (!refreshToken.getValue().equals(tokenRequest.getRefreshToken())) {
             throw new UnauthorizedAccessException("토큰의 유저 정보가 일치하지 않습니다.");
         }
 
@@ -76,7 +80,28 @@ public class AuthService {
     }
 
     @Transactional
-    public void logout(String id) {
-        refreshTokenRepository.deleteById(id);
+    public void logout(LogoutRequest logoutRequest) {
+        // 1. Access Token 검증
+        if (!jwtProvider.validateToken(logoutRequest.getAccessToken())) {
+            throw new UnauthorizedAccessException("Access Token이 유효하지 않습니다.");
+        }
+
+        // 2. Access Token 정보 추출 및 만료 시간 계산
+        String accessToken = logoutRequest.getAccessToken();
+        long accessTokenExpiration = jwtProvider.extractExpiration(accessToken).getTime();
+        long remainingTime = accessTokenExpiration - System.currentTimeMillis();
+
+        // 3. Access Token을 Redis 블랙리스트에 등록
+        Authentication authentication = jwtProvider.getAuthentication(accessToken);
+        String username = authentication.getName();
+        AccessToken blacklist = AccessToken.builder()
+                .key(username)
+                .value(accessToken)
+                .expired(remainingTime)
+                .build();
+        accessTokenRepository.save(blacklist);
+
+        // 4. Refresh Token을 Redis에서 삭제
+        refreshTokenRepository.deleteById(username);
     }
 }

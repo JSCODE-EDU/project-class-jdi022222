@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.sql.CallableStatement;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -121,5 +122,10 @@ public class JwtProvider {
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
+    }
+
+    public Date extractExpiration(String accessToken) {
+        Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(accessToken).getBody();
+        return claims.getExpiration();
     }
 }

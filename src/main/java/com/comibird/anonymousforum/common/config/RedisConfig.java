@@ -1,6 +1,5 @@
 package com.comibird.anonymousforum.common.config;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -11,9 +10,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-@Getter
 @Configuration
-@RequiredArgsConstructor
 @EnableRedisRepositories
 public class RedisConfig {
 

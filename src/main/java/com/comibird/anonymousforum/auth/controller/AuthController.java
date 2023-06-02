@@ -1,6 +1,7 @@
 package com.comibird.anonymousforum.auth.controller;
 
 import com.comibird.anonymousforum.auth.dto.request.LoginRequest;
+import com.comibird.anonymousforum.auth.dto.request.LogoutRequest;
 import com.comibird.anonymousforum.auth.dto.request.TokenRequest;
 import com.comibird.anonymousforum.auth.dto.response.TokenResponse;
 import com.comibird.anonymousforum.auth.service.AuthService;
@@ -21,14 +22,14 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(loginRequestDTO));
     }
 
-    @DeleteMapping("/logout/{id}")
-    public ResponseEntity<Void> logout(@PathVariable String id) {
-        authService.logout(id);
+    @DeleteMapping("/logout")
+    public ResponseEntity<Void> logout(@Valid @RequestBody LogoutRequest logoutRequest) {
+        authService.logout(logoutRequest);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<TokenResponse> reissue(@RequestBody TokenRequest tokenRequestDTO) {
-        return ResponseEntity.ok(authService.reissue(tokenRequestDTO));
+    public ResponseEntity<TokenResponse> reissue(@Valid @RequestBody TokenRequest tokenRequest) {
+        return ResponseEntity.ok(authService.reissue(tokenRequest));
     }
 }
