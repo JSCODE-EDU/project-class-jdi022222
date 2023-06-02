@@ -106,6 +106,15 @@ public class JwtProvider {
         return false;
     }
 
+    public Long getExpireDate (String accessToken) {
+        // 토큰 복호화
+        Claims claims = parseClaims(accessToken);
+
+        // 유효시간 반환
+        Date expiration = claims.getExpiration();
+        return expiration.getTime();
+    }
+
     private Claims parseClaims(String accessToken) {
         try {
             return Jwts.parser().setSigningKey(key).parseClaimsJws(accessToken).getBody();

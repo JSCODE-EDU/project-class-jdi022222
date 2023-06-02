@@ -56,7 +56,7 @@ public class AuthService {
         Authentication authentication = jwtProvider.getAuthentication(tokenRequestDTO.getAccessToken());
 
         // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
-        RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
+        RefreshToken refreshToken = refreshTokenRepository.findById(authentication.getName())
                 .orElseThrow(() -> new UnauthorizedAccessException("로그아웃 된 사용자입니다."));
 
         // 4. Refresh Token 일치하는지 검사
@@ -77,6 +77,6 @@ public class AuthService {
 
     @Transactional
     public void logout(String id) {
-        refreshTokenRepository.deleteByKey(id);
+        refreshTokenRepository.deleteById(id);
     }
 }
