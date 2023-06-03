@@ -2,8 +2,8 @@ package com.comibird.anonymousforum.auth;
 
 import com.comibird.anonymousforum.auth.jwt.JwtAccessDeniedHandler;
 import com.comibird.anonymousforum.auth.jwt.JwtAuthenticationEntryPoint;
-import com.comibird.anonymousforum.auth.jwt.JwtSecurityConfig;
 import com.comibird.anonymousforum.auth.jwt.JwtProvider;
+import com.comibird.anonymousforum.auth.jwt.JwtSecurityConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,14 +37,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     };
 
     private static final String[] GET_WHITELIST = {
-            "/users/login",
-            "/posts/**"
+            "/posts",
+            "/posts/*"
     };
 
     private static final String[] POST_WHITELIST = {
             "/users/signup",
             "/users/login",
-            "/posts/**"
+            "/users/reissue",
+            "/comment/**",
+            "/heart/**"
+    };
+
+    private static final String[] DELETE_WHITELIST = {
+            "/users/logout/*",
     };
 
     @Override
@@ -67,6 +73,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                                 .antMatchers(ALL_WHITELIST).permitAll()
                                 .antMatchers(GET, GET_WHITELIST).permitAll()
                                 .antMatchers(POST, POST_WHITELIST).permitAll()
+                                .antMatchers(DELETE, DELETE_WHITELIST).permitAll()
                                 .antMatchers("/**").authenticated()
                 ).formLogin(
                         formLogin -> formLogin

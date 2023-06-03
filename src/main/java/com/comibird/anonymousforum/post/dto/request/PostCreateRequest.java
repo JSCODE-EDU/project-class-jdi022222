@@ -1,6 +1,5 @@
 package com.comibird.anonymousforum.post.dto.request;
 
-import com.comibird.anonymousforum.post.domain.Post;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -9,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Getter
-public class PostCreateRequestDTO {
+public class PostCreateRequest {
 
     @NotBlank(message = "제목은 공백이 될 수 없습니다.")
     @Size(min = 1, max = 15, message = "제목을 1글자 이상 15글자 이하로 입력해주세요.")
@@ -20,15 +19,8 @@ public class PostCreateRequestDTO {
     private String content;
 
     @Builder
-    private PostCreateRequestDTO(String title, String content) {
+    private PostCreateRequest(String title, String content) {
         this.title = title;
         this.content = content;
-    }
-
-    public Post toEntity() {
-        return Post.builder()
-                .title(title)
-                .content(content)
-                .build();
     }
 }

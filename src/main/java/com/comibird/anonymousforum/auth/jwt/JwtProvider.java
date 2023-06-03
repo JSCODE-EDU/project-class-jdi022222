@@ -1,6 +1,6 @@
 package com.comibird.anonymousforum.auth.jwt;
 
-import com.comibird.anonymousforum.auth.dto.response.TokenResponseDTO;
+import com.comibird.anonymousforum.auth.dto.response.TokenResponse;
 import com.comibird.anonymousforum.auth.exception.UnauthorizedAccessException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -16,12 +16,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.sql.CallableStatement;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-import static io.jsonwebtoken.SignatureAlgorithm.*;
+import static io.jsonwebtoken.SignatureAlgorithm.HS512;
 
 @Slf4j
 @Component
@@ -39,7 +40,7 @@ public class JwtProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokenResponseDTO generateTokenDto(Authentication authentication) {
+    public TokenResponse generateToken(Authentication authentication) {
         // 권한들 가져오기
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -62,7 +63,7 @@ public class JwtProvider {
                 .signWith(HS512, key)
                 .compact();
 
-        return TokenResponseDTO.builder()
+        return TokenResponse.builder()
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
                 .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
@@ -106,11 +107,25 @@ public class JwtProvider {
         return false;
     }
 
+    public Long getExpireDate (String accessToken) {
+        // 토큰 복호화
+        Claims claims = parseClaims(accessToken);
+
+        // 유효시간 반환
+        Date expiration = claims.getExpiration();
+        return expiration.getTime();
+    }
+
     private Claims parseClaims(String accessToken) {
         try {
             return Jwts.parser().setSigningKey(key).parseClaimsJws(accessToken).getBody();
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
+    }
+
+    public Date extractExpiration(String accessToken) {
+        Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(accessToken).getBody();
+        return claims.getExpiration();
     }
 }

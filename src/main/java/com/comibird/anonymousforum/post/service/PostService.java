@@ -1,13 +1,18 @@
 package com.comibird.anonymousforum.post.service;
 
+import com.comibird.anonymousforum.auth.exception.UnauthorizedAccessException;
+import com.comibird.anonymousforum.comment.domain.Comment;
+import com.comibird.anonymousforum.comment.repository.CommentRepository;
 import com.comibird.anonymousforum.post.domain.Post;
-import com.comibird.anonymousforum.post.dto.request.PostCreateRequestDTO;
-import com.comibird.anonymousforum.post.dto.response.PostResponseDTO;
-import com.comibird.anonymousforum.post.dto.response.PostResponsesDTO;
+import com.comibird.anonymousforum.post.dto.request.PostCreateRequest;
+import com.comibird.anonymousforum.post.dto.response.PostCommentResponse;
+import com.comibird.anonymousforum.post.dto.response.PostResponses;
 import com.comibird.anonymousforum.post.exception.PostNotFoundException;
 import com.comibird.anonymousforum.post.repository.PostRepository;
+import com.comibird.anonymousforum.user.domain.User;
+import com.comibird.anonymousforum.user.exception.UserNotFoundException;
+import com.comibird.anonymousforum.user.reposiroty.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,76 +23,57 @@ import java.util.List;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
-    /**
-     * 게시글 생성
-     *
-     * @param requestDTO
-     * @return requestDTO
-     */
     @Transactional
-    public void save(PostCreateRequestDTO requestDTO) {
-        Post post = requestDTO.toEntity();
+    public void save(Long userId, PostCreateRequest requestDTO) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        Post post = Post.builder()
+                .title(requestDTO.getTitle())
+                .content(requestDTO.getContent())
+                .user(user)
+                .build();
         postRepository.save(post);
     }
 
-    /**
-     * 게시글 전체 조회
-     * 최근 100개 limit
-     *
-     * @return PostResponsesDTO
-     */
     @Transactional(readOnly = true)
-    public PostResponsesDTO findPosts() {
+    public PostResponses findPosts() {
         List<Post> posts = postRepository.findTop100ByOrderByCreatedAtDesc();
-
-        return PostResponsesDTO.of(posts);
+        return PostResponses.of(posts);
     }
 
-    /**
-     * id로 게시글 조회
-     *
-     * @param id
-     * @return PostResponseDTO
-     */
     @Transactional(readOnly = true)
-    public PostResponseDTO findPostById(Long id) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
-        return PostResponseDTO.from(post);
+    public PostCommentResponse findPostById(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
+        List<Comment> comments = commentRepository.findAllByPostId(post.getId());
+        return PostCommentResponse.from(post, comments);
     }
 
-    /**
-     * 게시글 수정
-     *
-     * @param id
-     * @param requestDTO title, content 수정
-     */
     @Transactional
-    public void editPostById(Long id, PostCreateRequestDTO requestDTO) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
+    public void editPostById(Long userId, Long postId, PostCreateRequest requestDTO) {
+        Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
+        validatePostOwner(userId, post);
         post.updatePost(requestDTO.getTitle(), requestDTO.getContent());
     }
 
-    /**
-     * id로 게시글 삭제
-     *
-     * @param id
-     */
     @Transactional
-    public void deletePostById(Long id) {
-        postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
-        postRepository.deleteById(id);
+    public void deletePostById(Long userId, Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
+        validatePostOwner(userId, post);
+        postRepository.deleteById(postId);
     }
 
-    /**
-     * 키워드로 게시글 최근 100개 조회
-     *
-     * @param keyword
-     * @return PostResponsesDTO
-     */
     @Transactional(readOnly = true)
-    public PostResponsesDTO findPostsByKeyword(String keyword) {
+    public PostResponses findPostsByKeyword(String keyword) {
         List<Post> posts = postRepository.findTop100ByTitleContainingOrderByCreatedAtDesc(keyword);
-        return PostResponsesDTO.of(posts);
+        return PostResponses.of(posts);
+    }
+
+    @Transactional(readOnly = true)
+    public void validatePostOwner(Long userId, Post post) {
+        if (post.getId() != userId) {
+            throw new UnauthorizedAccessException("본인의 게시글만 접근할 수 있습니다.");
+        }
     }
 }
