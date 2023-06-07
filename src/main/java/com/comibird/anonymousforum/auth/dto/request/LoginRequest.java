@@ -1,8 +1,6 @@
 package com.comibird.anonymousforum.auth.dto.request;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import javax.validation.constraints.Email;
@@ -10,8 +8,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 public class LoginRequest {
 
     @NotEmpty(message = "이메일을 입력해주세요.")

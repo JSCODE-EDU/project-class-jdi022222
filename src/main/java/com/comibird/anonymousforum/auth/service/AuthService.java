@@ -1,16 +1,13 @@
 package com.comibird.anonymousforum.auth.service;
 
-import com.comibird.anonymousforum.auth.domain.AccessToken;
-import com.comibird.anonymousforum.auth.domain.RefreshToken;
 import com.comibird.anonymousforum.auth.dto.request.LoginRequest;
-import com.comibird.anonymousforum.auth.dto.request.LogoutRequest;
-import com.comibird.anonymousforum.auth.dto.request.TokenRequest;
+import com.comibird.anonymousforum.auth.dto.request.ReissueRequest;
 import com.comibird.anonymousforum.auth.dto.response.TokenResponse;
 import com.comibird.anonymousforum.auth.exception.UnauthorizedAccessException;
 import com.comibird.anonymousforum.auth.jwt.JwtProvider;
-import com.comibird.anonymousforum.auth.repository.AccessTokenRepository;
-import com.comibird.anonymousforum.auth.repository.RefreshTokenRepository;
+import com.comibird.anonymousforum.redis.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -22,8 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtProvider jwtProvider;
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final AccessTokenRepository accessTokenRepository;
+    private final RedisUtil redisUtil;
 
     @Transactional
     public TokenResponse login(LoginRequest loginRequest) {
@@ -33,75 +29,70 @@ public class AuthService {
         // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
         //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        String userId = authentication.getName();
 
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
-        TokenResponse token = jwtProvider.generateToken(authentication);
+        TokenResponse tokenResponse = jwtProvider.generateToken(authentication);
 
         // 4. RefreshToken 저장
-        RefreshToken refreshToken = RefreshToken.builder()
-                .key(authentication.getName())
-                .value(token.getRefreshToken())
-                .build();
-
-        refreshTokenRepository.save(refreshToken);
+        String refreshToken = tokenResponse.getRefreshToken();
+        Long expiration = jwtProvider.getExpiration(tokenResponse.getRefreshToken());
+        redisUtil.setRefreshToken(userId, refreshToken, expiration);
 
         // 5. 토큰 발급
-        return token;
+        return tokenResponse;
     }
 
-    @Transactional
-    public TokenResponse reissue(TokenRequest tokenRequest) {
-        // 1. Refresh Token 검증
-        if (!jwtProvider.validateToken(tokenRequest.getRefreshToken())) {
-            throw new UnauthorizedAccessException("Refresh Token 이 유효하지 않습니다.");
-        }
-
-        // 2. Access Token 에서 Member ID 가져오기
-        Authentication authentication = jwtProvider.getAuthentication(tokenRequest.getAccessToken());
-
-        // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
-        RefreshToken refreshToken = refreshTokenRepository.findById(authentication.getName())
-                .orElseThrow(() -> new UnauthorizedAccessException("로그아웃 된 사용자입니다."));
-
-        // 4. Refresh Token 일치하는지 검사
-        if (!refreshToken.getValue().equals(tokenRequest.getRefreshToken())) {
-            throw new UnauthorizedAccessException("토큰의 유저 정보가 일치하지 않습니다.");
-        }
-
-        // 5. 새로운 토큰 생성
-        TokenResponse tokenDTO = jwtProvider.generateToken(authentication);
-
-        // 6. 저장소 정보 업데이트
-        RefreshToken newRefreshToken = refreshToken.updateValue(tokenDTO.getRefreshToken());
-        refreshTokenRepository.save(newRefreshToken);
-
-        // 토큰 발급
-        return tokenDTO;
-    }
 
     @Transactional
-    public void logout(LogoutRequest logoutRequest) {
+    public void logout(String accessToken) {
         // 1. Access Token 검증
-        if (!jwtProvider.validateToken(logoutRequest.getAccessToken())) {
+        if (!jwtProvider.validateToken(accessToken)) {
             throw new UnauthorizedAccessException("Access Token이 유효하지 않습니다.");
         }
 
+        Authentication authentication = jwtProvider.getAuthentication(accessToken);
+        String userId = authentication.getName();
+
         // 2. Access Token 정보 추출 및 만료 시간 계산
-        String accessToken = logoutRequest.getAccessToken();
-        long accessTokenExpiration = jwtProvider.extractExpiration(accessToken).getTime();
+        long accessTokenExpiration = jwtProvider.getExpiration(accessToken);
         long remainingTime = accessTokenExpiration - System.currentTimeMillis();
 
         // 3. Access Token을 Redis 블랙리스트에 등록
-        Authentication authentication = jwtProvider.getAuthentication(accessToken);
-        String username = authentication.getName();
-        AccessToken blacklist = AccessToken.builder()
-                .key(username)
-                .value(accessToken)
-                .expired(remainingTime)
-                .build();
-        accessTokenRepository.save(blacklist);
+        redisUtil.setAccessTokenBlacklist(userId, accessToken, remainingTime);
 
-        // 4. Refresh Token을 Redis에서 삭제
-        refreshTokenRepository.deleteById(username);
+        // 4. Refresh Token 삭제
+        redisUtil.deleteRefreshToken(userId);
+    }
+
+    @Transactional
+    public TokenResponse reissue(ReissueRequest reissueRequest) {
+        // 1. AccessToken, Refresh Token 검증
+        if (!jwtProvider.validateToken(reissueRequest.getAccessToken())) {
+            throw new UnauthorizedAccessException("Access Token이 유효하지 않습니다.");
+        }
+        if (!jwtProvider.validateToken(reissueRequest.getRefreshToken())) {
+            throw new UnauthorizedAccessException("Refresh Token이 유효하지 않습니다.");
+        }
+
+        // 2. 인증정보 가져오기
+        Authentication authentication = jwtProvider.getAuthentication(reissueRequest.getAccessToken());
+        String userId = authentication.getName();
+
+        // 3. Redis에서 RefreshToken 조회
+        String refreshToken = redisUtil.getRefreshToken(userId);
+        if (!refreshToken.equals(reissueRequest.getRefreshToken())) {
+            throw new UnauthorizedAccessException("Refresh Token이 만료되었습니다.");
+        }
+
+        // 3. 새로운 토큰 생성
+        TokenResponse tokenResponse = jwtProvider.generateToken(authentication);
+
+        // 4. 저장소 정보 업데이트
+        Long expiration = jwtProvider.getExpiration(tokenResponse.getRefreshToken());
+        redisUtil.setRefreshToken(userId, reissueRequest.getRefreshToken(), expiration);
+
+        // 5. 토큰 발급
+        return tokenResponse;
     }
 }

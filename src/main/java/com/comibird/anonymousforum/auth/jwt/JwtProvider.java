@@ -2,6 +2,7 @@ package com.comibird.anonymousforum.auth.jwt;
 
 import com.comibird.anonymousforum.auth.dto.response.TokenResponse;
 import com.comibird.anonymousforum.auth.exception.UnauthorizedAccessException;
+import com.comibird.anonymousforum.redis.util.RedisUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -16,7 +17,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.sql.CallableStatement;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -34,10 +34,12 @@ public class JwtProvider {
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7;  // 7일
 
     private final Key key;
+    private final RedisUtil redisUtil;
 
-    public JwtProvider(@Value("${jwt.secret-key}") String secretKey) {
+    public JwtProvider(@Value("${jwt.secret-key}") String secretKey, RedisUtil redisUtil) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
+        this.redisUtil = redisUtil;
     }
 
     public TokenResponse generateToken(Authentication authentication) {
@@ -91,9 +93,9 @@ public class JwtProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateToken(String refreshToken) {
         try {
-            Jwts.parser().setSigningKey(key).parseClaimsJws(token);
+            Jwts.parser().setSigningKey(key).parseClaimsJws(refreshToken);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("잘못된 JWT 서명입니다.");
@@ -107,15 +109,6 @@ public class JwtProvider {
         return false;
     }
 
-    public Long getExpireDate (String accessToken) {
-        // 토큰 복호화
-        Claims claims = parseClaims(accessToken);
-
-        // 유효시간 반환
-        Date expiration = claims.getExpiration();
-        return expiration.getTime();
-    }
-
     private Claims parseClaims(String accessToken) {
         try {
             return Jwts.parser().setSigningKey(key).parseClaimsJws(accessToken).getBody();
@@ -124,8 +117,9 @@ public class JwtProvider {
         }
     }
 
-    public Date extractExpiration(String accessToken) {
-        Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(accessToken).getBody();
-        return claims.getExpiration();
+    public Long getExpiration(String token) {
+        Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
+        return claims.getExpiration().getTime();
     }
+
 }

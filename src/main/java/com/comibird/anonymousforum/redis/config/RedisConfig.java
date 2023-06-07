@@ -1,4 +1,4 @@
-package com.comibird.anonymousforum.common.config;
+package com.comibird.anonymousforum.redis.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +30,7 @@ public class RedisConfig {
         RedisTemplate<byte[], byte[]> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
         return redisTemplate;
     }
 }
