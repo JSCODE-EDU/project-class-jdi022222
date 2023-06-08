@@ -1,5 +1,6 @@
 package com.comibird.anonymousforum.post.domain;
 
+import com.comibird.anonymousforum.comment.domain.Comment;
 import com.comibird.anonymousforum.common.domain.BaseTimeEntity;
 import com.comibird.anonymousforum.heart.domain.Heart;
 import com.comibird.anonymousforum.user.domain.User;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -32,9 +34,13 @@ public class Post extends BaseTimeEntity {
     private User user;
 
     @OneToMany(mappedBy = "post",
-            fetch = FetchType.LAZY,
             cascade = CascadeType.REMOVE, orphanRemoval = true)
-    Set<Heart> hearts = new HashSet<>();
+    Set<Heart> hearts;
+
+    @OneToMany(mappedBy = "post",
+            cascade = CascadeType.REMOVE, orphanRemoval = true)
+    List<Comment> comments;
+
 
     @Builder
     private Post(String title, String content, User user) {
