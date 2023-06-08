@@ -22,18 +22,18 @@ public class PostCommentResponse {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
-    private CommentResponses commentResponses;
     private int heartCount;
+    private CommentResponses commentResponses;
 
     @Builder
-    private PostCommentResponse(Long postId, String email, String title, String content, LocalDateTime createdAt, List<Comment> comments, Set<Heart> hearts) {
+    private PostCommentResponse(Long postId, String email, String title, String content, LocalDateTime createdAt, Set<Heart> hearts, List<Comment> comments) {
         this.postId = postId;
         this.userEmail = email;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
-        this.commentResponses = CommentResponses.of(comments);
         this.heartCount = hearts.size();
+        this.commentResponses = CommentResponses.of(comments);
     }
 
     public static PostCommentResponse from(Post post, List<Comment> comments) {
@@ -43,8 +43,8 @@ public class PostCommentResponse {
                 .title(post.getTitle())
                 .content(post.getContent())
                 .createdAt(post.getCreatedAt())
-                .comments(comments)
                 .hearts(post.getHearts())
+                .comments(comments)
                 .build();
     }
 }

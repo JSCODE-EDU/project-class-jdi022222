@@ -20,15 +20,17 @@ public class PostResponse {
     private LocalDateTime createdAt;
 
     private int heartCount;
+    private int commentCount;
 
     @Builder
-    private PostResponse(Long postId, String email, String title, String content, LocalDateTime createdAt, Set<Heart> hearts) {
+    private PostResponse(Long postId, String email, String title, String content, LocalDateTime createdAt, Set<Heart> hearts, int commentCount) {
         this.postId = postId;
         this.userEmail = email;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
         this.heartCount = hearts.size();
+        this.commentCount = commentCount;
     }
 
     public static PostResponse from(Post post) {
@@ -39,6 +41,7 @@ public class PostResponse {
                 .content(post.getContent())
                 .createdAt(post.getCreatedAt())
                 .hearts(post.getHearts())
+                .commentCount(post.getCommentCount())
                 .build();
     }
 }
