@@ -22,7 +22,7 @@ public class CommentService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void save(Long userId, Long postId, CommentCreateRequest commentCreateRequest) {
+    public Long save(Long userId, Long postId, CommentCreateRequest commentCreateRequest) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
         Comment comment = Comment.builder()
@@ -32,6 +32,7 @@ public class CommentService {
                 .build();
         post.addComment(comment);
         commentRepository.save(comment);
+        return comment.getId();
     }
 
     @Transactional

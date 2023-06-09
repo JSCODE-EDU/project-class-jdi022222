@@ -19,10 +19,10 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/{postId}")
-    public ResponseEntity<Void> addComment(@PathVariable Long postId,
+    public ResponseEntity<Long> addComment(@PathVariable Long postId,
                                            @Valid @RequestBody CommentCreateRequest commentCreateRequest){
-        commentService.save(SecurityUtil.getCurrentMemberId(), postId, commentCreateRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        Long savedCommentId = commentService.save(SecurityUtil.getCurrentMemberId(), postId, commentCreateRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedCommentId);
     }
 
     @DeleteMapping("/{commentId}")

@@ -18,10 +18,11 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void save(UserCreateRequest requestDTO) {
+    public Long save(UserCreateRequest requestDTO) {
         checkExistingEmail(requestDTO.getEmail());
         User user = requestDTO.toEntity();
         userRepository.save(user);
+        return user.getId();
     }
 
     @Transactional(readOnly = true)

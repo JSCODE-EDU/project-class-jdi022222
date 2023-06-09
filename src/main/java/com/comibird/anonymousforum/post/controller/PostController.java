@@ -27,9 +27,9 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping
-    public ResponseEntity<Void> addPost(@Valid @RequestBody PostCreateRequest requestDTO) {
-        postService.save(SecurityUtil.getCurrentMemberId(), requestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<Long> addPost(@Valid @RequestBody PostCreateRequest requestDTO) {
+        Long savedPostId = postService.save(SecurityUtil.getCurrentMemberId(), requestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedPostId);
     }
 
     @GetMapping

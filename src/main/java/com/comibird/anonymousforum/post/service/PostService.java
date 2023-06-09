@@ -28,14 +28,15 @@ public class PostService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public void save(Long userId, PostCreateRequest requestDTO) {
+    public Long save(Long userId, PostCreateRequest postCreateRequest) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Post post = Post.builder()
-                .title(requestDTO.getTitle())
-                .content(requestDTO.getContent())
+                .title(postCreateRequest.getTitle())
+                .content(postCreateRequest.getContent())
                 .user(user)
                 .build();
         postRepository.save(post);
+        return post.getId();
     }
 
     @Transactional(readOnly = true)
@@ -51,17 +52,16 @@ public class PostService {
     }
 
     @Transactional
-    public void editPostById(Long userId, Long postId, PostCreateRequest requestDTO) {
+    public void editPostById(Long userId, Long postId, PostCreateRequest postCreateRequest) {
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
         validatePostOwner(userId, post);
-        post.updatePost(requestDTO.getTitle(), requestDTO.getContent());
+        post.updatePost(postCreateRequest.getTitle(), postCreateRequest.getContent());
     }
 
     @Transactional
     public void deletePostById(Long userId, Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
         validatePostOwner(userId, post);
-        commentRepository.deleteByPostId(postId);
         postRepository.deleteById(postId);
     }
 
