@@ -1,4 +1,4 @@
-package com.comibird.anonymousforum.auth;
+package com.comibird.anonymousforum.auth.config;
 
 import com.comibird.anonymousforum.auth.jwt.JwtAccessDeniedHandler;
 import com.comibird.anonymousforum.auth.jwt.JwtAuthenticationEntryPoint;
@@ -47,8 +47,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/users/signup",
             "/users/login",
             "/users/reissue",
-            "/comment/**",
-            "/heart/**"
     };
 
     private static final String[] DELETE_WHITELIST = {
