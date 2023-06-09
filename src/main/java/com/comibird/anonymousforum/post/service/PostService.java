@@ -47,8 +47,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostCommentResponse findPostById(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
-        List<Comment> comments = commentRepository.findAllByPostId(post.getId());
-        return PostCommentResponse.from(post, comments);
+        return PostCommentResponse.from(post);
     }
 
     @Transactional
