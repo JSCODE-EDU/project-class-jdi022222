@@ -61,6 +61,7 @@ public class PostService {
     public void deletePostById(Long userId, Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
         validatePostOwner(userId, post);
+        commentRepository.deleteByPostId(postId);
         postRepository.deleteById(postId);
     }
 

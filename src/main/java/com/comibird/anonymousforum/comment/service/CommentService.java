@@ -33,4 +33,10 @@ public class CommentService {
         post.addComment(comment);
         commentRepository.save(comment);
     }
+
+    @Transactional
+    public void deleteComment(Long userId, Long commentId) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        commentRepository.deleteById(commentId);
+    }
 }

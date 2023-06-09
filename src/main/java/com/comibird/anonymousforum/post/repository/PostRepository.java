@@ -13,7 +13,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @EntityGraph(attributePaths = {"hearts", "comments"})
     List<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
-    @EntityGraph(attributePaths = {"hearts"})
+    @EntityGraph(attributePaths = {"hearts", "comments"})
     List<Post> findAllByTitleContainingOrderByCreatedAtDesc(String keyword, Pageable pageable);
 
 }
