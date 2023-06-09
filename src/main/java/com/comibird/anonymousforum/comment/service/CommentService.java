@@ -30,7 +30,6 @@ public class CommentService {
                 .user(user)
                 .post(post)
                 .build();
-        post.addComment(comment);
         commentRepository.save(comment);
         return comment.getId();
     }

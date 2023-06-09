@@ -33,4 +33,8 @@ public class Heart extends BaseTimeEntity {
         this.user = user;
         this.post = post;
     }
+
+    public void setPost(Post post) {
+        this.post = post;
+    }
 }

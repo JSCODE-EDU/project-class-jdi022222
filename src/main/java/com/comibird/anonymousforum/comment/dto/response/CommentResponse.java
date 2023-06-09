@@ -9,13 +9,15 @@ import java.time.LocalDateTime;
 
 @Getter
 public class CommentResponse {
+    private Long commentId;
     private String content;
     private String email;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
     @Builder
-    private CommentResponse(String content, String email, LocalDateTime createdAt) {
+    private CommentResponse(Long commentId, String content, String email, LocalDateTime createdAt) {
+        this.commentId = commentId;
         this.content = content;
         this.email = email;
         this.createdAt = createdAt;
@@ -23,6 +25,7 @@ public class CommentResponse {
 
     public static CommentResponse from(Comment comment) {
         return CommentResponse.builder()
+                .commentId(comment.getId())
                 .content(comment.getContent())
                 .email(comment.getUser().getEmail())
                 .createdAt(comment.getCreatedAt())

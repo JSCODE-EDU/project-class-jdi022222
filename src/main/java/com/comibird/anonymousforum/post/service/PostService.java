@@ -3,6 +3,7 @@ package com.comibird.anonymousforum.post.service;
 import com.comibird.anonymousforum.auth.exception.UnauthorizedAccessException;
 import com.comibird.anonymousforum.comment.domain.Comment;
 import com.comibird.anonymousforum.comment.repository.CommentRepository;
+import com.comibird.anonymousforum.heart.domain.Heart;
 import com.comibird.anonymousforum.post.domain.Post;
 import com.comibird.anonymousforum.post.dto.request.PostCreateRequest;
 import com.comibird.anonymousforum.post.dto.response.PostCommentResponse;

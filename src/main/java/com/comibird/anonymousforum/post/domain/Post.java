@@ -60,12 +60,4 @@ public class Post extends BaseTimeEntity {
     public int getCommentCount() {
         return comments.size();
     }
-
-    public void addComment(Comment comment) {
-        this.comments.add(comment);
-    }
-
-    public void addHeart(Heart heart) {
-        this.hearts.add(heart);
-    }
 }
