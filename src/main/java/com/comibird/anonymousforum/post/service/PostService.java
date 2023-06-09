@@ -13,6 +13,7 @@ import com.comibird.anonymousforum.user.domain.User;
 import com.comibird.anonymousforum.user.exception.UserNotFoundException;
 import com.comibird.anonymousforum.user.reposiroty.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,8 +39,8 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public PostResponses findPosts() {
-        List<Post> posts = postRepository.findTop100ByOrderByCreatedAtDesc();
+    public PostResponses findPosts(Pageable pageable) {
+        List<Post> posts = postRepository.findAllByOrderByCreatedAtDesc(pageable);
         return PostResponses.of(posts);
     }
 
@@ -65,8 +66,8 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public PostResponses findPostsByKeyword(String keyword) {
-        List<Post> posts = postRepository.findTop100ByTitleContainingOrderByCreatedAtDesc(keyword);
+    public PostResponses findPostsByKeyword(String keyword, Pageable pageable) {
+        List<Post> posts = postRepository.findAllByTitleContainingOrderByCreatedAtDesc(keyword, pageable);
         return PostResponses.of(posts);
     }
 

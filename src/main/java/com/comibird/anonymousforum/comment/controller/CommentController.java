@@ -23,8 +23,8 @@ public class CommentController {
 
     @PostMapping("/{postId}")
     public ResponseEntity<Void> addComment(@PathVariable Long postId,
-                                           @Valid @RequestBody CommentCreateRequest commentCreateRequestDTO){
-        commentService.save(SecurityUtil.getCurrentMemberId(), postId, commentCreateRequestDTO);
+                                           @Valid @RequestBody CommentCreateRequest commentCreateRequest){
+        commentService.save(SecurityUtil.getCurrentMemberId(), postId, commentCreateRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

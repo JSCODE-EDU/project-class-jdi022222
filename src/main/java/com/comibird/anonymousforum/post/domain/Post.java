@@ -41,7 +41,6 @@ public class Post extends BaseTimeEntity {
             cascade = CascadeType.REMOVE, orphanRemoval = true)
     List<Comment> comments;
 
-
     @Builder
     private Post(String title, String content, User user) {
         this.title = title;
@@ -54,7 +53,19 @@ public class Post extends BaseTimeEntity {
         this.content = content;
     }
 
+    public int getHeartCount() {
+        return hearts.size();
+    }
+
     public int getCommentCount() {
         return comments.size();
+    }
+
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+    }
+
+    public void addHeart(Heart heart) {
+        this.hearts.add(heart);
     }
 }
