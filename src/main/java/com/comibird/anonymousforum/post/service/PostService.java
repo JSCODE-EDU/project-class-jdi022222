@@ -3,6 +3,7 @@ package com.comibird.anonymousforum.post.service;
 import com.comibird.anonymousforum.auth.exception.UnauthorizedAccessException;
 import com.comibird.anonymousforum.comment.domain.Comment;
 import com.comibird.anonymousforum.comment.repository.CommentRepository;
+import com.comibird.anonymousforum.heart.domain.Heart;
 import com.comibird.anonymousforum.post.domain.Post;
 import com.comibird.anonymousforum.post.dto.request.PostCreateRequest;
 import com.comibird.anonymousforum.post.dto.response.PostCommentResponse;
@@ -13,6 +14,7 @@ import com.comibird.anonymousforum.user.domain.User;
 import com.comibird.anonymousforum.user.exception.UserNotFoundException;
 import com.comibird.anonymousforum.user.reposiroty.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,46 +29,46 @@ public class PostService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public void save(Long userId, PostCreateRequest requestDTO) {
+    public Long save(Long userId, PostCreateRequest postCreateRequest) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Post post = Post.builder()
-                .title(requestDTO.getTitle())
-                .content(requestDTO.getContent())
+                .title(postCreateRequest.getTitle())
+                .content(postCreateRequest.getContent())
                 .user(user)
                 .build();
         postRepository.save(post);
+        return post.getId();
     }
 
     @Transactional(readOnly = true)
-    public PostResponses findPosts() {
-        List<Post> posts = postRepository.findTop100ByOrderByCreatedAtDesc();
+    public PostResponses findPosts(Pageable pageable) {
+        List<Post> posts = postRepository.findAllByOrderByCreatedAtDesc(pageable);
         return PostResponses.of(posts);
     }
 
     @Transactional(readOnly = true)
     public PostCommentResponse findPostById(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
-        List<Comment> comments = commentRepository.findAllByPostId(post.getId());
-        return PostCommentResponse.from(post, comments);
+        return PostCommentResponse.from(post);
     }
 
     @Transactional
-    public void editPostById(Long userId, Long postId, PostCreateRequest requestDTO) {
+    public void editPostById(Long userId, Long postId, PostCreateRequest postCreateRequest) {
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
         validatePostOwner(userId, post);
-        post.updatePost(requestDTO.getTitle(), requestDTO.getContent());
+        post.updatePost(postCreateRequest.getTitle(), postCreateRequest.getContent());
     }
 
     @Transactional
     public void deletePostById(Long userId, Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
         validatePostOwner(userId, post);
-        postRepository.deleteById(postId);
+        postRepository.deletePostAndCommentById(postId);
     }
 
     @Transactional(readOnly = true)
-    public PostResponses findPostsByKeyword(String keyword) {
-        List<Post> posts = postRepository.findTop100ByTitleContainingOrderByCreatedAtDesc(keyword);
+    public PostResponses findPostsByKeyword(String keyword, Pageable pageable) {
+        List<Post> posts = postRepository.findAllByTitleContainingOrderByCreatedAtDesc(keyword, pageable);
         return PostResponses.of(posts);
     }
 

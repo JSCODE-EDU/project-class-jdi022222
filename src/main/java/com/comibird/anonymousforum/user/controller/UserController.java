@@ -20,9 +20,9 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<Void> singUp(@Valid @RequestBody UserCreateRequest requestDTO) {
-        userService.save(requestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<Long> singUp(@Valid @RequestBody UserCreateRequest requestDTO) {
+        Long savedUserId = userService.save(requestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedUserId);
     }
 
     @GetMapping("/me")

@@ -1,9 +1,10 @@
-package com.comibird.anonymousforum.auth;
+package com.comibird.anonymousforum.auth.config;
 
 import com.comibird.anonymousforum.auth.jwt.JwtAccessDeniedHandler;
 import com.comibird.anonymousforum.auth.jwt.JwtAuthenticationEntryPoint;
 import com.comibird.anonymousforum.auth.jwt.JwtProvider;
 import com.comibird.anonymousforum.auth.jwt.JwtSecurityConfig;
+import com.comibird.anonymousforum.redis.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +27,7 @@ import static org.springframework.http.HttpMethod.*;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtProvider jwtProvider;
+    private final RedisUtil redisUtil;
     private final JwtAuthenticationEntryPoint authenticationEntryPoint;// 인증 실패 또는 인증헤더가 전달받지 못했을때 핸들러
     private final JwtAccessDeniedHandler accessDeniedHandler;// 인가 실패 핸들러
 
@@ -45,12 +47,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/users/signup",
             "/users/login",
             "/users/reissue",
-            "/comment/**",
-            "/heart/**"
     };
 
     private static final String[] DELETE_WHITELIST = {
-            "/users/logout/*",
+
     };
 
     @Override
@@ -83,7 +83,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 // JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용
-                .apply(new JwtSecurityConfig(jwtProvider));
+                .apply(new JwtSecurityConfig(jwtProvider, redisUtil));
 
     }
 

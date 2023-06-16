@@ -27,7 +27,7 @@ public class HeartService {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
 
-        if (isAlreadyLike(user, post)){
+        if (isAlreadyLike(user, post)) {
             throw new AlreadyHeartException();
         }
 
@@ -35,6 +35,7 @@ public class HeartService {
                 .user(user)
                 .post(post)
                 .build();
+
         heartRepository.save(heart);
     }
 
@@ -43,7 +44,7 @@ public class HeartService {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
 
-        if (!isAlreadyLike(user, post)){
+        if (!isAlreadyLike(user, post)) {
             throw new HeartNotFoundException();
         }
 
